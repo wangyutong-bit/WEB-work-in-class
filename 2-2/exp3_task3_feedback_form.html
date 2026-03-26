@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息反馈表单</title>
+    <style>
+        * {
+            color: #111111;
+        }
+
+        body {
+            background-color: #e2e2e2;
+        }
+
+        h1 {
+            color: #000000;
+        }
+
+        table {
+            background-color: #dadada;
+            border-color: #7f7f7f;
+        }
+
+        th {
+            background-color: #ebebeb;
+            border-color: #8c8c8c;
+            color: #000000;
+        }
+
+        td {
+            background-color: #ebebeb;
+            border-color: #8c8c8c;
+            color: #111111;
+        }
+
+        input {
+            background-color: #f8f8f8;
+            border-color: #9a9a9a;
+            color: #222222;
+        }
+
+        select {
+            background-color: #f8f8f8;
+            border-color: #9a9a9a;
+            color: #222222;
+        }
+
+        .label {
+            color: #000000;
+        }
+
+        .radio {
+            color: #222222;
+        }
+
+        .radio-input {
+            accent-color: #3a6ed8;
+        }
+
+        .radio-text {
+            color: #222222;
+        }
+
+        .btn {
+            background-color: #dfdfdf;
+            border-color: #8f8f8f;
+            color: #111111;
+        }
+
+        #actions {
+            background-color: #ebebeb;
+        }
+    </style>
+</head>
+<body>
+    <h1><span>信息反馈表单</span></h1>
+
+    <form id="feedbackForm" action="#" method="post">
+        <table>
+            <tr>
+                <td class="label">参会者姓名</td>
+                <td colspan="3"><input type="text" name="name"></td>
+                <td class="label">职务</td>
+                <td><input type="text" name="title" placeholder="请输入您的职务"></td>
+            </tr>
+            <tr>
+                <td class="label">工作单位</td>
+                <td colspan="5"><input type="text" name="company"></td>
+            </tr>
+            <tr>
+                <td class="label">电话</td>
+                <td><input type="text" name="phone"></td>
+                <td class="label">传真</td>
+                <td><input type="text" name="fax"></td>
+                <td class="label">手机</td>
+                <td><input type="text" name="mobile"></td>
+            </tr>
+            <tr>
+                <td class="label">通讯地址</td>
+                <td colspan="3"><input type="text" name="address"></td>
+                <td class="label">邮编</td>
+                <td><input type="text" name="zipcode"></td>
+            </tr>
+            <tr>
+                <td class="label">E-mail</td>
+                <td colspan="3"><input type="email" name="email"></td>
+                <td class="label">国家</td>
+                <td>
+                    <select name="country">
+                        <option value="">请选择</option>
+                        <option value="cn">中国</option>
+                        <option value="us">美国</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">省份</td>
+                <td colspan="3">
+                    <select name="province">
+                        <option value="">请选择</option>
+                        <option value="beijing">北京</option>
+                        <option value="shanghai">上海</option>
+                        <option value="guangdong">广东</option>
+                    </select>
+                </td>
+                <td class="label">城市</td>
+                <td><input type="text" name="city"></td>
+            </tr>
+            <tr>
+                <th colspan="6">会议费标准（人民币）</th>
+            </tr>
+            <tr>
+                <th>身份</th>
+                <th colspan="3">之前注册</th>
+                <th colspan="2">之后注册</th>
+            </tr>
+            <tr>
+                <td class="label">会员</td>
+                <td colspan="3" class="radio">
+                    <input class="radio-input" type="radio" name="member_fee" value="1500">
+                    <span class="radio-text">1500元</span>
+                </td>
+                <td colspan="2" class="radio">
+                    <input class="radio-input" type="radio" name="member_fee" value="1800">
+                    <span class="radio-text">1800元</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">非会员</td>
+                <td colspan="3" class="radio">
+                    <input class="radio-input" type="radio" name="non_member_fee" value="1800">
+                    <span class="radio-text">1800元</span>
+                </td>
+                <td colspan="2" class="radio">
+                    <input class="radio-input" type="radio" name="non_member_fee" value="2000">
+                    <span class="radio-text">2000元</span>
+                </td>
+            </tr>
+            <tr>
+                <td id="actions" colspan="6">
+                    <input class="btn" type="submit" value="提 交">
+                    <input class="btn" type="reset" value="重置">
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 容器：卡片居中 */
+.box {
+    width: 1000px;
+    margin: 50px auto;
+    display: flex;
+    justify-content: center;
+}
+
+/* 卡片核心样式：大尺寸+无框标注+古风修饰 */
+.card {
+    width: 520px; /* 放大宽度 */
+    height: 360px; /* 放大高度 */
+    border: 2px solid #8B4513;
+    border-radius: 15px;
+    padding: 35px;
+    background-color: #fdf6ec;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(139, 69, 19, 0.18);
+    /* 古风背景修饰：淡色山水+古卷 */
+    background-image: url("https://pic.icons8.com/ios/200/000000/scroll.png"), 
+                      url("https://pic.icons8.com/fluency/200/000000/mountain.png");
+    background-repeat: no-repeat;
+    background-position: top right 30px, bottom right 30px;
+    background-size: 70px 70px, 80px 80px;
+    transition: all 0.3s ease;
+}
+
+/* 卡片悬浮：背景变色+阴影加深 */
+.card:hover {
+    background-color: #f8ede0;
+    box-shadow: 0 6px 15px rgba(139, 69, 19, 0.28);
+}
+
+/* 标题样式：古风配色+放大字号 */
+h3 {
+    font-size: 32px;
+    color: #8B4513;
+    margin-bottom: 22px;
+    font-family: "SimHei", sans-serif;
+    border-bottom: 1px dashed #8B4513;
+    padding-bottom: 10px;
+}
+
+/* 简介：默认显示+放大字号 */
+.brief {
+    font-size: 18px;
+    color: #5a3b20;
+    display: block;
+    line-height: 1.9;
+    text-indent: 2em;
+    font-family: "SimSun", serif;
+}
+
+/* 详情：默认隐藏+放大字号 */
+.detail {
+    font-size: 16px;
+    color: #3a2613;
+    display: none;
+    line-height: 1.8;
+    font-family: "SimSun", serif;
+    height: 280px;
+    overflow-y: auto;
+    padding-right: 12px;
+}
+
+/* 详情文本缩进 */
+.detail p {
+    text-indent: 2em;
+    margin-bottom: 8px;
+}
+
+/* 卡片悬浮：切换显示/隐藏 */
+.card:hover .brief {
+    display: none;
+}
+.card:hover .detail {
+    display: block;
+}
+
+/* -------------------------- 悬浮标签：无框标注 -------------------------- */
+.tag {
+    display: inline;
+    color: #8B4513;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* 标签悬浮：仅变色+轻微放大，无框 */
+.tag:hover {
+    color: #cc0000;
+    font-size: 1.05em;
+}
+
+/* -------------------------- 超链接样式 -------------------------- */
+.detail a {
+    color: #8B4513;
+    text-decoration: none;
+    margin-top: 12px;
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #8B4513;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+}
+.detail a:hover {
+    color: #fff;
+    background-color: #8B4513;
+}
+
+/* 滚动条美化 */
+.detail::-webkit-scrollbar {
+    width: 7px;
+}
+.detail::-webkit-scrollbar-thumb {
+    background-color: #8B4513;
+    border-radius: 4px;
+}

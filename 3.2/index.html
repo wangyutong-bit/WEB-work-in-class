@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 28px;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .option {
+            display: block;
+            padding: 30px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .option.option-2 {
+            background: #f5576c;
+        }
+        
+        .option.option-2:hover {
+            box-shadow: 0 8px 20px rgba(245, 87, 108, 0.4);
+        }
+        
+        .option.option-3 {
+            background: #00f2fe;
+        }
+        
+        .option.option-3:hover {
+            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
+        }
+        
+        .option.option-4 {
+            background: #38f9d7;
+        }
+        
+        .option.option-4:hover {
+            box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+        }
+        
+        .option.option-5 {
+            background: #fee140;
+        }
+        
+        .option.option-5:hover {
+            box-shadow: 0 8px 20px rgba(250, 112, 154, 0.4);
+        }
+        
+        .option.option-6 {
+            background: #330867;
+        }
+        
+        .option.option-6:hover {
+            box-shadow: 0 8px 20px rgba(48, 207, 208, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>选择项目</h1>
+        <div class="options-grid">
+            <a href="zuoye.html" class="option">精忠报国</a>
+            <a href="d.html" class="option option-2">悬梁刺股</a>
+            <a href="nangying.html" class="option option-3">囊萤映雪</a>
+            <a href="666.html" class="option option-4">凿壁偷光</a>
+            <a href="8.html" class="option option-5">愚公移山</a>
+            <a href="zaobitouguang.html" class="option option-6">凿壁偷光</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>岳飞 - 精忠报国</title>
+    <style>
+        /* 页面基础样式，消除默认边距 */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 卡片基础样式 - 占屏幕80% */
+        .card {
+            width: 80%; /* 宽度占屏幕80% */
+            height: 80vh; /* 高度占屏幕视口高度的80% */
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 40px; /* 加大内边距，适配大尺寸 */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+            background: #ffffff;
+            transition: all 0.3s ease;
+            box-sizing: border-box; /* 保证内边距不超出80%宽度 */
+        }
+
+        /* 鼠标悬停效果：背景变色+阴影增强 */
+        .card:hover {
+            background: #f8e9d6;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        /* 摘要区域默认显示，悬停时隐藏 */
+        .card-summary {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center; /* 水平居中 */
+            text-align: center; /* 文本居中 */
+            transition: all 0.3s ease;
+        }
+
+        /* 详情区域默认隐藏，悬停时显示 */
+        .card-detail {
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center; /* 水平居中 */
+            text-align: center; /* 文本居中 */
+            line-height: 2; /* 加大行高，提升可读性 */
+            transition: all 0.3s ease;
+        }
+
+        /* 核心：鼠标悬浮时切换显示状态 */
+        .card:hover .card-summary {
+            display: none;
+        }
+        .card:hover .card-detail {
+            display: flex;
+        }
+
+        /* 链接样式 */
+        .link {
+            color: #1976d2;
+            text-decoration: none;
+            margin-top: 20px;
+            display: inline-block;
+            font-size: 18px;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        /* 强调文本样式 */
+        ins {
+            color: #c62828;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        h3 {
+            margin-top: 0;
+            color: #212121;
+            font-size: 36px; /* 加大标题字号 */
+            margin-bottom: 20px;
+        }
+        .txt {
+            color: #616161;
+            font-size: 24px; /* 加大正文字号 */
+            max-width: 80%; /* 限制文本宽度，避免太宽影响阅读 */
+        }
+
+        /* 详情文本样式适配 */
+        .card-detail p {
+            font-size: 20px;
+            color: #424242;
+            max-width: 90%;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <!-- 默认显示的摘要内容 -->
+        <div class="card-summary">
+            <h3>精忠报国</h3>
+            <p class="txt">岳飞年少从军，母刺"精忠报国"于背，率岳家军抗击金兵，成为一代民族英雄</p>
+        </div>
+        <!-- 悬浮时显示的详情内容 -->
+        <div class="card-detail">
+            <h3>岳飞 - 精忠报国</h3>
+            <p>岳飞是南宋著名抗金名将，自幼习武且心怀家国。其母为勉励他报效国家，在他背上刺下<ins>“精忠报国”</ins>四字。他率领的岳家军军纪严明、作战勇猛，多次大败金兵，收复失地。虽遭奸臣秦桧陷害含冤而死，但他的爱国精神永垂青史。
+                <a href="https://baike.baidu.com/item/岳飞" target="_blank" class="link">查看完整故事</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 声明字符编码 -->
+    <meta charset="UTF-8">
+    <!-- 响应式视口设置 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入外部JavaScript文件 -->
+    <script src="demo.js"></script>
+</head>
+<body>
+    <!-- 按钮容器 -->
+     //函数调用
+    <div>
+        <!-- 点击按钮，触发hello()函数 -->
+        <button onclick="hello()">点击我</button>
+    </div>
+    <div>
+        //警告消息使用
+        <script type="text/javascript">
+            // 在这里可以添加其他JavaScript代码
+            function showAlert() {
+                alert("这是一个警告消息！");
+            }
+            showAlert();
+        </script>
+    </div>
+    <input type="button" value="显示警告框" onclick="showAlert()" value="显示警告框">
+    <div>
+        //确认框使用
+        <script type = "text/javascript">
+            function showconfirm(){
+                var r=confirm("你写作业了吗？");
+                if(r==true)
+                {
+                    alert("我写作业了");
+                }
+                else
+                {
+                    alert("我还没写作业");
+                }
+            }
+        </script>
+    </div>
+    <input type="button" onclick="showconfirm()" value="显示确认框">
+    <div>
+        //提示框使用
+        <script type="text/javascript">
+            function showprompt(){
+                var name = prompt("请输入你的名字：","王宇桐");
+                if(name!=null&&name!=""){
+                    document.write("你好，" + name + "!");
+                }
+            }
+            
+        </script>
+    </div>
+    <input type="button" onclick="showprompt()" value="显示提示框">
+    <div>
+        <script>
+            //函数
+            function jige(){
+                var score = prompt("请输入你的成绩");
+                if(score<60)
+                    {
+                    alter("不及格");
+                    }
+                else if(score>=60&&score<70)
+                    {
+                    alert("及格");
+                    }
+                else if(score>=70&&score<80)
+                    {
+                        alert("良好");
+                    }
+                else if(score>=80&&score<90)
+                    {
+                        alert("还可以");
+                    }
+                else if(score>=90&&score<=100)
+                    {
+                        alert("优秀");
+                    }
+            }
+        </script>
+        <input type="button" onclick="jige()" value="请输入成绩">
+    </div>
+</body>
+</html>

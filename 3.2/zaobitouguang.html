@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>成语故事交互卡片</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", serif;
+        }
+        body {
+            width: 1000px;
+            margin: 50px auto;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            background-color: #f8f5f0;
+        }
+        .card {
+            width: 350px;
+            height: 200px;
+            border: 2px solid #8b4513;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            background-color: #fff;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+        .card .intro {
+            display: block;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .card .detail {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .card:hover {
+            background-color: #e8f4ff;
+        }
+        .card:hover .intro {
+            display: none;
+        }
+        .card:hover .detail {
+            display: flex;
+        }
+        .card h3 {
+            font-size: 24px;
+            color: #a0522d;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .card p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            text-indent: 2em;
+        }
+        .card .bg-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.15;
+            z-index: -1;
+        }
+        .card .detail a {
+            text-decoration: none;
+            color: #2980b9;
+            margin-top: 10px;
+            display: inline-block;
+            text-align: center;
+        }
+        .card .detail a:hover {
+            text-decoration: underline;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="intro">
+            <h3>悬梁刺股</h3>
+            <p>形容废寝忘食地刻苦学习，由“头悬梁”与“锥刺股”两个典故组成，激励后人勤学苦读。</p >
+        </div>
+        <div class="detail">
+            < img src="xuanliang.jpg" class="bg-img" alt="悬梁刺股">
+            <p>东汉孙敬为防犯困，将头发系于房梁；战国苏秦困倦时以锥刺股。二人皆凭勤奋终成大器，彰显了中华民族自强不息的治学精神。</p >
+            <a href=" " target="_blank">查看完整典故</a >
+        </div>
+    </div>
+    <div class="card">
+        <div class="intro">
+            <h3>凿壁偷光</h3>
+            <p>原指西汉匡衡凿穿墙壁引邻舍烛光读书，后用来形容家贫仍刻苦向学的可贵品质。</p >
+        </div>
+        <div class="detail">
+            < img src="zaobi.jpg" class="bg-img" alt="凿壁偷光">
+            <p>匡衡幼时家贫无灯，凿壁借邻舍微光苦读，终成一代学者，官至丞相，诠释了“逆境成才”的传统美德。</p >
+            <a href="https://baike.baidu.com/item/凿壁偷光" target="_blank">查看完整典故</a >
+        </div>
+    </div>
+</body>
+</html>

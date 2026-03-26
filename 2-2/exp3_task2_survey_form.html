@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调查</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+        }
+
+        .survey-box {
+            width: 600px;
+            margin: 14px auto;
+            border: 2px solid;
+            padding: 38px 20px 34px;
+        }
+
+        h1 {
+            margin: 0 0 28px;
+            text-align: center;
+            font-size: 42px;
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .row {
+            margin-bottom: 18px;
+            font-size: 34px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .row input[type="text"] {
+            width: 220px;
+            height: 30px;
+            border: 1px solid;
+            padding: 2px 6px;
+            font-size: 24px;
+            vertical-align: middle;
+        }
+
+        .row select {
+            width: 82px;
+            height: 30px;
+            border: 1px solid;
+            font-size: 22px;
+            vertical-align: middle;
+        }
+
+        .inline-gap {
+            margin-left: 12px;
+        }
+
+        .row .reason {
+        
+            margin-right: 8px;
+        }
+
+        .row input[type="checkbox"],
+        .row input[type="radio"] {
+            transform: scale(1.08);
+            margin: 0 3px 0 0;
+            vertical-align: middle;
+        }
+
+        .other {
+            margin-top: 22px;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 170px;
+            border: 1px solid;
+            resize: vertical;
+            font-size: 20px;
+            padding: 6px;
+        }
+
+        .score {
+            margin-top: 18px;
+            margin-bottom: 16px;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .buttons input {
+            min-width: 44px;
+            height: 32px;
+            margin: 0 6px;
+            border: 1px solid;
+            font-size: 23px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="survey-box">
+        <form action="#" method="post">
+            <h1>调查</h1>
+
+            <div class="row">
+                <label for="brand">喜欢的品牌:</label>
+                <input id="brand" name="brand" type="text" placeholder="请输入品牌名称">
+                <span class="inline-gap"><label for="origin">产地:</label></span>
+                <select id="origin" name="origin">
+                    <option value="中国" selected>中国</option>
+                    <option value="美国">美国</option>
+                    <option value="日本">日本</option>
+                    <option value="德国">德国</option>
+                </select>
+            </div>
+
+            <div class="row">
+                喜欢的原因:
+                <label class="reason"><input type="checkbox" name="reason" value="外观">外观</label>
+                <label class="reason"><input type="checkbox" name="reason" value="功能">功能</label>
+                <label class="reason"><input type="checkbox" name="reason" value="价格">价格</label>
+            </div>
+
+            <div class="row other">其他原因...</div>
+            <textarea name="other_reason"></textarea>
+
+            <div class="row score">
+                打分:
+                <label><input type="radio" name="score" value="1">1</label>
+                <label><input type="radio" name="score" value="2">2</label>
+                <label><input type="radio" name="score" value="3">3</label>
+                <label><input type="radio" name="score" value="4">4</label>
+                <label><input type="radio" name="score" value="5">5</label>
+            </div>
+
+            <div class="buttons">
+                <input type="submit" value="提交">
+                <input type="reset" value="重置">
+            </div>
+        </form>
+    </div>
+</body>
+</html>
