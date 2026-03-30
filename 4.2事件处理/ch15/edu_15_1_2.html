@@ -1,0 +1,30 @@
+<!-- edu_15_1_2.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title> JavaScript中地动态指定</title>
+    <style type="text/css">
+      #inp {width: 100px;height: 40px;color: red;}
+    </style>
+    <script type="text/javascript">
+      function clickHandler() {
+        alert("代码触发事件，即将提交表单！");
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <form name="myform" method="post" action="">
+      <input id="inp" type="button" name="mybutton" value="提交">
+    </form>
+    <script type="text/javascript">
+      //向 button 元素动态分配 onclick 事件
+      document.getElementById('inp').onclick = function() {
+        return clickHandler();
+      }
+      myform.mybutton.onclick(); //程序触发  
+      //window.addEventListener('click', clickHandler)//使用此需要屏蔽23-25行代码  
+    </script>
+  </body>
+</html>

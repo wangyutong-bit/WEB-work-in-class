@@ -1,0 +1,33 @@
+<!-- edu_15_2_3.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>下拉菜单</title>
+    <script language="javascript">
+      function $(id) {
+        return document.getElementById(id);
+      } //获取元素
+      function changeImage() {
+        var index = $("game").selectedIndex; //获取下拉框中选择项
+        $("show").src = $("game").options[index].value; //更改图片
+      }
+    </script>
+  </head>
+  <body>
+    <div align="center">
+      <form>
+        <select id="game" onChange="changeImage()">
+          <option value="pic4.jpg">--请选择--</option>
+          <option value="pic0.jpg">平板电视</option>
+          <option value="pic1.jpg">笔记本电脑</option>
+          <option value="pic2.jpg">单反相机</option>
+          <option value="pic3.jpg">智能手机</option>
+        </select>
+      </form>
+    </div>
+    <p align="center">
+      <img src="pic4.jpg" id="show">
+    </p>
+  </body>
+</html>

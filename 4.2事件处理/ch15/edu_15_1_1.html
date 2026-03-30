@@ -1,0 +1,20 @@
+<!-- edu_15_1_1.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>HTML属性的事件处理器的应用</title>
+    <script type="text/javascript">
+      function testInfo(message) {
+        alert(message);
+      }
+    </script>
+  </head>
+  <body>
+    <h4>HTML属性的事件处理器的应用</h4>
+    <form method="post" action="">
+      <input type="button" value="通过JS语句输出信息" onclick="alert('使用alert()输出信息')">
+      <input type="button" value="通过函数输出信息" onclick="testInfo('调用testInfo()函数输出信息')">
+    </form>
+  </body>
+</html>
