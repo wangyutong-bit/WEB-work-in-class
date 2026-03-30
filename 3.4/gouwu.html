@@ -1,0 +1,135 @@
+<!-- edu_14_7_1.html -->
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>手机网上微店</title>
+		<style type="text/css">
+			table {width: 580px;height: 200px;
+				box-shadow: 0 0 15px 15px #F2F3F4;}
+			caption {margin: 15px auto;font-size: 22px;}
+			td {text-align: center;vertical-align: middle;}
+			.myBtn {margin: 20px;width: 120px;height: 45px;
+				border: 1px solid #44FFEE;border-radius: 25px;}
+      .myBtn:hover {background-color: #F1D2E3;}
+		</style>
+		<script type="text/javascript">
+			var result = ""; //存放选购信息			
+			var price = new Array(2576.00, 2999.00, 3898.00, 699.00, 599.00, 699.00); //存放6种手机的价格
+			var product = new Array("iPhone 6 32GB 金色 移动联通电信4G", "OPPO R11 全网通 黑色版","Apple iPhone 6s Plus 32GB 金色 移动联通电信4G手机", "小米 红米手机4X 全网通版 2GB内存 16GB 香槟金", "小米 红米手机4A 全网通版 2GB内存 16GB 玫瑰金","小米 红米4X 全网通版 2GB内存 16GB 樱花粉"); //存放6种手机的名称
+			var isSelected = new Array(0, 0, 0, 0, 0, 0); //存放每个产品的购买数量
+
+			function clearAll() {
+				isSelected = [0, 0, 0, 0, 0, 0]; //所有商品数量全部置为0
+				
+				//循环遍历6个商品，更新其对应的数量显示框
+				for (var i = 0; i < 6; i++) {
+					document.getElementById("qty" + i).value = 0; //获取id为"qty0"-"qty5"的文本框，设值为0
+				}
+			}
+			function addQuantity(number) {
+				isSelected[number]++; //该商品购买数量加1
+				document.getElementById("qty" + number).value = isSelected[number]; //更新显示框的值
+			}
+			function minusQuantity(number) {
+				if (isSelected[number] > 0) { //数量必须>0才能减
+					isSelected[number]--; //该商品购买数量减1
+					document.getElementById("qty" + number).value = isSelected[number]; //更新显示框的值
+				}
+			}
+			function checkOut() {
+				var total = 0; //累计总价
+				var count = 0; //累计总件数
+				
+				//遍历所有商品，累加每个商品选中的数量
+				for (var i = 0; i < isSelected.length; i++) {
+					count += isSelected[i]; //总件数 = 所有商品数量之和
+				}
+				if (count == 0) {
+					alert("购物车为空，请先选购商品！");
+					return; //函数直接返回，不继续执行
+				}
+				
+				//遍历所有商品，累加总价格 = 单价 × 数量
+				for (var i = 0; i < price.length; i++) {
+					total = total + price[i] * isSelected[i]; //总价 = 先前总价 + (单价 × 该商品数量)
+				}
+				alert("您所选购的" + count + "件，产品总价=" + total.toFixed(2) + "元\n" + "请去支付！");
+			}
+			function shoppingCart() {
+				var selectList = ""; //累计生成购物清单字符串
+				
+				//遍历所有6种商品
+				for (var j = 0; j < product.length; j++) {
+					if (isSelected[j] > 0) {
+						selectList += (j + 1) + "-" + product[j] + "，数量=" + isSelected[j] + "件，小计=" + (price[j] * isSelected[j]).toFixed(2) + "元\n";
+					}
+				}
+				
+				var info = (selectList == "") ? "您的购物车为空，请选购！" : selectList;
+				alert(info); //弹出购物车信息
+			}
+		</script>
+	</head>
+	<body>
+		<form name="myForm" method="post" action="">
+			<table align="center" border="0">
+				<caption>手机批发业务-商品备选区</caption>
+				<tr>
+					<td><img src="mobile_1.jpg" /><br />
+						<h4 name="h41">iPhone 6 32GB 金色 移动联通电信4G</h4>
+						<button type="button" onclick="minusQuantity(0);">-</button> 
+						<input type="text" id="qty0" value="0" size="3" readonly style="text-align:center;"> 
+						<button type="button" onclick="addQuantity(0);">+</button> 
+						¥ 2576.00<br />
+					</td>
+					<td><img src="moblie_2.jpg" /><br />
+						<h4 name="h421">OPPO R11 全网通 黑色版</h4>
+						<button type="button" onclick="minusQuantity(1);">-</button>
+						<input type="text" id="qty1" value="0" size="3" readonly style="text-align:center;">
+						<button type="button" onclick="addQuantity(1);">+</button>
+						¥ 2999.00<br />
+					</td>
+					<td><img src="moblie_3.jpg" /><br />
+						<h4 name="h43">Apple iPhone 6s Plus 32GB 金色 移动联通电信4G手机</h4>
+						<button type="button" onclick="minusQuantity(2);">-</button>
+						<input type="text" id="qty2" value="0" size="3" readonly style="text-align:center;">
+						<button type="button" onclick="addQuantity(2);">+</button>
+						¥ 3898.00<br />
+					</td>
+				</tr>
+				<tr>
+					<td><img src="moblie_4.jpg" /><br />
+						<h4 name="h44">小米 红米手机4X 全网通版 2GB内存 16GB 香槟金</h4>
+						<button type="button" onclick="minusQuantity(3);">-</button>
+						<input type="text" id="qty3" value="0" size="3" readonly style="text-align:center;">
+						<button type="button" onclick="addQuantity(3);">+</button>
+						¥ 699.00
+						<br />
+					</td>
+					<td><img src="moblie_5.jpg" /><br />
+						<h4 name="h45">小米 红米手机4A 全网通版 2GB内存 16GB 玫瑰金</h4>
+						<button type="button" onclick="minusQuantity(4);">-</button>
+						<input type="text" id="qty4" value="0" size="3" readonly style="text-align:center;">
+						<button type="button" onclick="addQuantity(4);">+</button>
+						¥ 599.00<br />
+					</td>
+					<td><img src="moblie_6.jpg" /><br />
+						<h4 name="h46">小米 红米4X 全网通版 2GB内存 16GB 樱花粉</h4>
+						<button type="button" onclick="minusQuantity(5);">-</button>
+						<input type="text" id="qty5" value="0" size="3" readonly style="text-align:center;">
+						<button type="button" onclick="addQuantity(5);">+</button>
+						¥ 699.00<br />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<input class="myBtn" type="button" value="查看购物车" onclick="shoppingCart();">
+						<input class="myBtn" type="button" value="收银台结算" onclick="checkOut();">
+						<input class="myBtn" type="button" value="初始化参数" onclick="clearAll();">
+					</td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>
