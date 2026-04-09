@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        function createp()
+        {
+            var p = document.createElement("p");
+            p.innerHTML = "这是一个段落";
+            document.body.appendChild(p);
+        }
+    </script>
+</head>
+<body>
+    <button onclick="createp()">创建段落</button>
+</body>
+</html>
