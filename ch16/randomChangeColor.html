@@ -1,0 +1,57 @@
+<!--  改变随机颜色
+  程序名称：randomChangeColor.html 
+	开发人员：储久良
+	时间：2015.02.20
+-->
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>改变随机颜色</title>
+		<style type="text/css">
+			#div1 {
+				width: 500px;
+				height: 300px;
+				color: #0000ff;
+				background: #99ffff;
+			}
+
+			body {
+				text-align: center;
+			}
+		</style>
+		<script type="text/javascript">
+			<!--
+			function randomChangeColor() {
+				//随机改变颜色					
+				var rr = Math.floor(Math.random() * 256);
+				var gg = Math.floor(Math.random() * 256);
+				var bb = Math.floor(Math.random() * 256);
+				//var color_str="rgb("+rr+","+gg+","+bb+")";
+				var color_str = "#" + intTo2Hex(rr) + intTo2Hex(gg) + intTo2Hex(bb);
+				document.getElementById('div1').style.background = color_str;
+				document.getElementById('div1').style.background = color_str;
+				document.getElementById('color1').value = color_str;
+			}
+			/* 将一个小于等于255的整数转换为2位十六进制数*/
+			function intTo2Hex(num) {
+				if (num < 16) {
+					num = "0" + num.toString(16).toUpperCase();
+				} else {
+					num = num.toString(16).toUpperCase();
+				}
+				return num;
+			}
+			//
+			-->
+		</script>
+	</head>
+
+	<body>
+		<div id="div1" class="">
+			<h2>改变随机颜色</h2>
+			<input type="text" name="" id="color1">
+			<input type="button" value="随机变色" onclick="randomChangeColor();">
+		</div>
+	</body>
+</html>

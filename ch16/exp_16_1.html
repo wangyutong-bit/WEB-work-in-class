@@ -1,0 +1,114 @@
+<!-- exp_16_1.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>留言板</title>
+    <style type="text/css">
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      ul {
+        text-align: left;
+        list-style-type: none;
+      }
+
+      .delete {
+        display: inline-block;
+        width: 20px;
+        height: 18px;
+        line-height: 18px;
+        text-align: center;
+        color: red;
+      }
+
+      #content {
+        margin: 10px auto;
+        background-color: #F2E3D3;
+        width: 400px;
+        height: 200px;
+        padding: 20px;
+        border-radius: 25px;
+        box-shadow: 0 0 5px 5px #003370;
+        text-align: center;
+      }
+
+      .btn {
+        width: 120px;
+        height: 20px;
+        border-radius: 20px;
+      }
+
+      p {
+        text-align: center;
+        padding: 5px;
+      }
+
+      #box {
+        margin: 0 auto;
+        width: 280px;
+        height: 100px;
+        border: 1px solid #003333;
+        overflow: scroll;
+      }
+    </style>
+    <script type="text/javascript">
+      function doSum() {
+        alert('一共发布了' + total + '条留言');
+      }
+    </script>
+  </head>
+  <body>
+    <div id="content">
+      <h3>留言板</h3>
+      <textarea id="msg" rows="3" cols="40" required="required" placeholder="请填写您的宝贵意见！"></textarea>
+      <p>
+        <input type="submit" class="btn" id="xiuyan" value="发表留言" />
+        <input type="button" class="btn" value="留言统计" onclick="doSum()">
+      </p>
+      <div id="box"></div>
+    </div>
+    <script type="text/javascript">
+      // 将ul标签添加到div#box标签中
+      var ul1 = document.createElement('ul');
+      var div1 = document.getElementById('box');
+      div1.appendChild(ul1);
+      var btn1 = document.getElementById('xiuyan');
+      var msg1 = document.getElementById('msg')
+      // 记录留言数量
+      var total = 0;
+      btn1.onclick = function() { // 单击留言按钮创建列表项        
+
+        var date1 = (new Date()).toLocaleDateString()
+        var li1 = document.createElement('li'); // 1.创建li标签
+        li1.innerHTML = date1 + ":" + msg1.value + "<span class='delete'>X</span>" //2.设置内容
+        // 在已有列表项以后添加
+        var lis = document.getElementsByTagName('li'); // 获取li
+        // 如果是第一次添加的li，则直接添加到ul的后面
+        if (lis.length == 0) {
+          ul1.appendChild(li1);
+          total++;
+        } else {
+          // 如果不是第一次添加的li，则插入到第一个li的前面
+          ul1.insertBefore(li1, lis[0]);
+          total++;
+        }
+        // 添加完成之后 清空textarea的值
+        msg1.value = '';
+        // 单击“X”的时候删除当前的一条数据
+        //  获取所有的“X”
+        var oSpans = document.getElementsByTagName('span');
+        // for循环 对所有的X添加点击事件
+        for (var i = 0; i < oSpans.length; i++) {
+          oSpans[i].onclick = function() {
+            // 移除当前的li
+            ul1.removeChild(this.parentNode)
+            total--;
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

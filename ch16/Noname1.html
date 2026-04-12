@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <title>Document</title>
+  <style type="text/css">
+	div{background:#ff6666;height:30px;width:100%;}
+	body{margin:0;padding:0 auto;width:100%;}
+  </style>
+	<script type="text/javascript">
+	function changelx()
+		
+	{
+	var a=document.getElementById("xuanze").selectedIndex;
+	document.getElementById("show").href=document.getElementById("xuanze").options[a].href;
+	var b=document.getElementById("xuanze").selectedIndex;
+	document.getElementById("show1").src=document.getElementById("xuanze").options[b].value;
+
+
+	}
+
+	</script>
+ </head>
+ <body>
+  <table border="3" height="180px" width="100%" bordercolorlight="#6600ff" bordercolordark="#00cc66">
+  <tr>
+	<td>	
+	<div id="" class="">
+		<p style="font-size:30px">&nbsp;&nbsp;&nbsp;&nbsp;实验成果展示
+		</p>
+	</div>
+	<center>
+	<select name="" onChange="changelx()" id="xuanze">
+		<option value="11220021.jpg" name="初始界面" selected>请选择下列项目</option>
+		<option value="12O610M2M0-52522.jpg" name="HTML基础" href="edu_14_1_1.html">HTML基础</option>
+		<option value="123.jpg" name="页面布局技术" href="edu_14_2_1.html">页面布局技术</option>
+		<option value="装满爱win7.jpg" name="JavaScript基础" href="edu_14_3_1.html">JavaScript基础</option>
+	<select>
+	</center>
+	</td>
+  </tr>
+  <tr>
+	<td><a href="网页布局技术.html" id="show"><img src="11220021.jpg" width="240px" height="305px" border="0" alt="请点击图片" id="show1"></a></td>
+  </tr>
+  </table>
+ </body>
+<hlml>
+
+

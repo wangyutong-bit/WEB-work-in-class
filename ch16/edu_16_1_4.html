@@ -1,0 +1,41 @@
+<!--  edu_16_1_4.html -->
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>随机产生[m,n]区间内10个整数</title>
+		<script type="text/javascript">
+			function $(id) {
+				return document.getElementById(id);//JavaScript 中用于通过元素的 id 属性值获取页面元素的核心方法，属于 DOM（文档对象模型）操作的基础。
+			}
+
+			function createInt() {
+				var m = parseFloat($("minN").value); //解析为实数
+				var n = parseFloat($("maxN").value); //解析为实数
+				var array_int = new Array();
+				if (m >= n) //合法性检验
+				{
+					alert("数组上、下限不能相同！请重新输入");
+					$("minN").focus(); //让文本框自动获取焦点
+				} else {
+					for (var i = 0; i < 10; i++) {
+						//产生 m-n 之间的随机数，
+						array_int[i] = Math.ceil((Math.random() * (n - m) + m));
+					}
+				}
+				$("array_num").value = array_int.join(",");
+			}
+		</script>
+	</head>
+	<body>
+		<h3>随机产生[m,n]区间内10个整数</h3>
+		<form name="Form1">
+			下限: <input type="text" name="minN" id="minN" size="20" value=10> 
+			<!-- 在 HTML 中，<input> 标签的 size 属性用于指定输入框的可见宽度，单位是 “字符数”（characters）-->
+			上限: <input type="text" name="maxN" id="maxN" size="20" value=90><br><br>
+			产生数组：<input type="text" name="" id="array_num" size="40" readonly><br><br>
+			<input type="button" value="产生10个随机整数" onclick="createInt();">
+			<input type="reset">
+		</form>
+	</body>
+</html>

@@ -1,0 +1,71 @@
+<!--  edu_16_2_6.html -->
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>获得、设置节点属性</title>
+		<style type="text/css">
+			td {
+				text-align: center;
+			}
+		</style>
+		<script type="text/javascript">
+			var bg_begin; //保存原始值
+			function getBgColor() {
+				bg_begin = $("myTable").getAttribute("bgColor"); //保存原始值
+			}
+
+			function $(id) {
+				return document.getElementById(id);
+			}
+
+			function randomInteger() { //随机产生0-255之间的整数
+				return Math.floor(Math.random() * 256);
+			}
+
+			function changeColor() {
+				$("myTable").setAttribute("bgColor", createHexColor());
+			}
+
+			function createHexColor() { //产生十六进制颜色串#FFFFFF
+				var rc = randomInteger().toString(16); //转换十六进制
+				var gc = randomInteger().toString(16); //转换十六进制
+				var bc = randomInteger().toString(16); //转换十六进制
+				return "#" + rc + gc + bc; //形成6位十六进制数
+			}
+
+			function restoreColor() {
+				$("myTable").setAttribute("bgColor", bg_begin);
+			}
+		</script>
+	</head>
+	<body onload="getBgColor()">
+		<form method="post" action="">
+			<table id="myTable" align="center" border="1" bgColor="#99cccc" width="500px">
+				<tr>
+					<caption>专业学生花名册</caption>
+					<td>序号</td>
+					<td>姓名</td>
+					<td>学号</td>
+					<td>专业</td>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td>储致衡</td>
+					<td>1209520112</td>
+					<td>计算机科学与技术</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>李大磊</td>
+					<td>1303020122</td>
+					<td>软件工程</td>
+				</tr>
+				<tr>
+					<td colspan="4"><input type="button" value="设置新颜色" onclick="changeColor()"><input type="button"
+							value="恢复原颜色(获取)" onclick="restoreColor()"></td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>

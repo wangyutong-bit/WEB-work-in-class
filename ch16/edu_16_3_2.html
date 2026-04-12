@@ -1,0 +1,17 @@
+<!--  edu_16_3_2.html -->
+<!DOCTYPE html>
+<html>
+	<body>
+		<div id="example"></div>
+		<script>
+			var txt = "<p>1.Browser CodeName: " + navigator.appCodeName + "</p>";
+			txt += "<p>2.Browser Name: " + navigator.appName + "</p>";
+			txt += "<p>3.Browser Version: " + navigator.appVersion + "</p>";
+			txt += "<p>4.Cookies Enabled: " + navigator.cookieEnabled + "</p>";
+			txt += "<p>5.Platform: " + navigator.platform + "</p>";
+			txt += "<p>6.User-agent header: " + navigator.userAgent + "</p>";
+			txt += "<p>7.User-agent language: " + navigator.systemLanguage + "</p>";
+			document.getElementById("example").innerHTML = txt;
+		</script>
+	</body>
+</html>
