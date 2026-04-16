@@ -1,0 +1,28 @@
+<div id="vbind-class">
+    <div :class="myclasses()">使用methods绑定class</div>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                size: 'your',
+                myback: 'my'
+            }
+        },
+        methods: {
+            myclasses() {
+                return this.size + " " + this.myback
+            }
+        }
+
+    }).mount('#vbind-class')
+</script>
+<style>
+    .my {
+        background-color: red
+    }
+    .your {
+        font-size: 20px
+    }
+</style>

@@ -1,0 +1,57 @@
+<div id="app">
+    <button @click="show">多组件过渡按钮</button>
+    <transition name="check" mode="out-in">
+        <!-- is用来展示的template组件，mode组件切换的模式，name过渡的前缀，component占位符表示展示的组件 -->
+        <component :is="view"></component>
+    </transition>
+</div>
+<!-- 登录子组件 -->
+<template id="login">
+    <div>
+        <h1>登录子组件</h1>
+    </div>
+</template>
+<!-- 注册子组件 -->
+<template id="register">
+    <div>
+        <h1>注册子组件</h1>
+    </div>
+</template>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                view: 'login'
+            }
+        },
+        methods: {
+            show: function () {
+                if (this.view == "login") {
+                    this.view = "register"
+                } else {
+                    this.view = "login"
+                }
+            }
+        },
+        components: {
+            login: {
+                template: "#login"
+            },
+            register: {
+                template: "#register"
+            }
+        }
+    })
+    app.mount('#app')
+</script>
+<style type="text/css">
+    .check-enter-from,
+    .check-leave-to {
+        opacity: 0;
+    }
+    .check-enter-active,
+    .check-leave-active {
+        transition: opacity 5s ease;
+    }
+</style>

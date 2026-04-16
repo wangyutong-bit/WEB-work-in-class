@@ -1,0 +1,42 @@
+<div id="app">
+    <my-element :items="items"></my-element>
+    <button @click="handleClick">显示列表</button>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                items: []
+            }
+        },
+        methods: {
+            handleClick: function () {
+                this.items = [
+                    'Java Web开发从入门到实战',
+                    'Java EE框架整合开发入门到实战',
+                    'Spring Boot从入门到实战',
+                    'SSM + Spring Boot + Vue.js 3全栈开发从入门到实战',
+                    'Vue.js 3从入门到实战'
+                ]
+            }
+        }
+    })
+    app.component('my-element', {
+        //组件my-element的渲染函数相当于模板功能
+        render() {
+            //items不为空
+            if (this.items.length) {
+                //渲染<ul>元素
+                return Vue.h('ul', this.items.map((item) => {
+                    //使用数组的map方法渲染列表项<li>
+                    return Vue.h('li', item)
+                }))
+            } else {//items为空，渲染一个“列表为空”的<p>元素
+                return Vue.h('p', '列表为空')
+            }
+        },
+        props: ['items']
+    })
+    app.mount('#app')
+</script>

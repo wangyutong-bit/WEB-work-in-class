@@ -1,0 +1,55 @@
+<div id="app">
+    <button @click="show = !show" class="btn">
+        添加到购物车
+    </button>
+    <transition @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter">
+        <div v-if="show" class="ball"></div>
+    </transition>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                show: false
+            }
+        },
+        methods: {
+            //el表示将要执行动画的DOM元素，beforeEnter表示动画开始前
+            beforeEnter(el) {
+                //设置元素动画开始前的起始位置
+                el.style.transform = "translate(0, 0)"
+            },
+            enter(el, done) {
+                //返回元素的宽度，强制动画刷新
+                el.offsetWidth
+                //设置元素动画开始之后的样式，设置完成之后状态
+                el.style.transform = "translate(200px, -200px)"
+                el.style.transition = "all 3s cubic-bezier(0, 0.54, 0.55, 1.18)"
+                //done这里代表afterEnter方法的引用
+                done()
+            },
+            afterEnter(el) {
+                //动画完成后，调用该方法
+                this.show = !this.show
+            }
+        }
+    })
+    app.mount('#app')
+</script>
+<style>
+   .ball {
+       width: 30px;
+       height: 30px;
+       border-radius: 50%;
+       background-color: green;
+       position: absolute;
+       z-index: 99;
+       top: 200px;
+       left: 100px;
+   }
+   .btn {
+       position: absolute;
+       top: 200px;
+   }
+</style>

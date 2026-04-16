@@ -1,0 +1,25 @@
+<template id="custom">
+    <!--为了让子组件正常工作，子组件内的 <input> 必须：将其value属性绑定到一个名为modelValue的props上在其input事件被触发时，将新的值通过自定义的update:modelValue事件传递-->
+    <input :value="modelValue" @input="$emit('update:modelValue', $event.target.value)">
+</template>
+<div id="vmodel-post-demo">
+    {{searchText}}<br><br>
+    <custom-input v-model="searchText"></custom-input><br><br>
+    <!--这两个子组件等价-->
+    <custom-input :model-value="searchText" @update:model-value="searchText = $event"></custom-input>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const blogApp = Vue.createApp({
+        data() {
+            return {
+                searchText: '陈恒'
+            }
+        }
+    })
+    blogApp.component('custom-input', {
+        props: ['modelValue'],
+        template: '#custom'
+    })
+    blogApp.mount('#vmodel-post-demo')
+</script>

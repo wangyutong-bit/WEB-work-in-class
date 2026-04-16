@@ -1,0 +1,54 @@
+<div id="app">
+    <button @click="handleClick('saved')">
+        显示Edit
+    </button>&nbsp;&nbsp;
+    <button @click="handleClick('edited')">
+        显示Save
+    </button>&nbsp;&nbsp;
+    <button @click="handleClick('editing')">
+        显示Cancel
+    </button>
+    <br><br>
+    <transition name="fade" mode="out-in">
+        <!--这里使用key让vue区分相同标签名元素，触发过渡-->
+        <button :key="docState">
+            {{ buttonMessage }}
+        </button>
+    </transition>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                docState: ''
+            }
+        },
+        methods: {
+            handleClick(myVal) {
+                this.docState = myVal
+            }
+        },
+        computed: {
+            buttonMessage() {
+                switch (this.docState) {
+                    case 'saved': return 'Edit'
+                    case 'edited': return 'Save'
+                    case 'editing': return 'Cancel'
+                    default: return '初始按钮'
+                }
+            }
+        }
+    })
+    app.mount('#app')
+</script>
+<style type="text/css">
+    .fade-enter-from,
+    .fade-leave-to {
+        opacity: 0;
+    }
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: opacity 5s ease;
+    }
+</style>

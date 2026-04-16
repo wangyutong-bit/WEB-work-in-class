@@ -1,0 +1,24 @@
+<template id="st">
+    <div ref="root">这是根元素</div>
+</template>
+<div id="app">
+    <setup-testing></setup-testing>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({})
+    app.component('setup-testing', {
+        setup() {
+            const root = Vue.ref(null)
+            Vue.onMounted(() => {
+                // DOM元素将在初始渲染后分配给ref
+                console.log(root.value) // <div>这是根元素</div>
+            })
+            return {
+                root
+            }
+        },
+        template: "#st"
+    })
+    app.mount('#app')
+</script>

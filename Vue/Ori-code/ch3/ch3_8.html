@@ -1,0 +1,35 @@
+<div id="myfor">
+    <ul>
+        <li v-for="(book, index) in books">
+            {{++index}}. {{book}}
+        </li>
+    </ul>
+    <ul>
+        <li v-for="(author, index) in authors">
+            {{++index}}. {{author.name}} - {{author.sex}}
+        </li>
+    </ul>
+    <p v-for="(value, key, index) in userinfo">键是：{{key}}，值是：{{value}}，索引是：{{index}}</p>
+    <p v-for="i in 5">这是第{{i}}段。</p>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                //普通数组
+                books: ['Java Web开发从入门到实战',
+                    'Java EE框架整合开发入门到实战——Spring+Spring MVC+MyBatis',
+                    'Spring Boot从入门到实战'],
+                //对象数组
+                authors: [{ name: '陈恒', sex: '男' }, { name: '陈恒11', sex: '女' },
+                { name: '陈恒22', sex: '男' }],
+                //对象
+                userinfo: {  
+                    uname: '陈恒3',
+                    age: 88
+                }
+            }
+        }
+    }).mount('#myfor')
+</script>

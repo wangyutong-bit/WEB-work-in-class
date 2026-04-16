@@ -1,0 +1,14 @@
+<div id="app">
+    <input v-focus type="text" />
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({})
+    //自定义指令focus，在模板中使用v-focus
+    app.directive('focus', {
+        mounted(el) {
+            el.focus()
+        }
+    })
+    app.mount('#app')
+</script>

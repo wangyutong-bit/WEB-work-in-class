@@ -1,0 +1,27 @@
+<div id="myfor">
+    大于100的元素：
+    <ul v-for="numbers in myData">
+        <li v-for="n in myNumbers(numbers)">
+            {{ n }}
+        </li>
+    </ul>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                myData: [[ 111, 200, 300, 44, 55 ], [600, 7777, 88, 999, 10]]
+            }
+        },
+        methods: {
+            //numbers=[ 111, 200, 300, 44, 55 ]
+            myNumbers(numbers) {
+                //number为numbers中的元素
+                return numbers.filter(function (number) {
+                    return number > 100
+                })
+            }
+        }
+    }).mount('#myfor')
+</script>

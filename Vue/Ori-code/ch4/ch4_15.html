@@ -1,0 +1,32 @@
+<div id="app">
+    <input type="text"/><br><br>
+    <base-input></base-input><br><br>
+    <input type="text"/>
+ </div>
+ <script src="js/vue.global.js"></script>
+ <script>
+     const app = Vue.createApp({})
+     app.component('base-input', {
+         /*ref引用子组件usernameInput，也可以直接引用HTML元素（如input）*/
+         template: '<input ref="usernameInput" />',
+         //直接引用HTML元素input
+         //template: '<input ref="input" />',
+         methods: {
+             focusInput() {
+                 this.$refs.usernameInput.focus()
+                 //this.$refs.input.focus()
+             }
+         },
+         mounted() {//页面加载后调用该函数
+             this.focusInput()
+         },
+         //如果前面直接引用HTML元素input，去掉此处子组件的定义
+         components: {
+             'usernameInput':{
+                 template: ' <input type="text"/>'
+             }
+         }
+     })
+     app.mount('#app')
+ </script>
+ 

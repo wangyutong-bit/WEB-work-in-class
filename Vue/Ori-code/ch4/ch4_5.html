@@ -1,0 +1,60 @@
+<template id="validate">
+    <div>
+        <h4>{{ num }}</h4>
+        <h4>{{ strnum }}</h4>
+        <h4>{{ isrequired }}</h4>
+        <h4>{{ numdefault }}</h4>
+        <h4>{{ objectdefault }}</h4>
+        <h4>{{ myfun }}</h4>
+    </div>
+</template>
+<div id="validate-post-demo">
+    <validate-post 
+        :num="200" 
+        :strnum="'sdf'" 
+        :isrequired="'abc'"
+        :numdefault="300"
+        :objectdefault="{a:'a'}" 
+        :myfun="'aaa'">
+    </validate-post>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const messageApp = Vue.createApp({})
+    messageApp.component('validate-post', {
+        props: {
+            // 基础的类型检查 (null 和 undefined`会通过任何类型验证)
+            num: Number,
+            // 多个可能的类型，字符串或数字
+            strnum: [String, Number],
+            // 必填的字符串
+            isrequired: {
+                type: String,
+                required: true
+            },
+            // 带有默认值的数字
+            numdefault: {
+                type: Number,
+                default: 100
+            },
+            // 带有默认值的对象
+            objectdefault: {
+                type: Object,
+                // 对象或数组默认值必须从一个工厂函数获取
+                default: function () {
+                    return { message: 'hello' }
+                }
+            },
+            // 自定义验证函数
+            myfun: {
+                validator: function (value) {
+                    alert(['success', 'warning', 'danger'].indexOf(value) !== -1)
+                    // 这个值必须匹配下列字符串中的一个
+                    return ['success', 'warning', 'danger'].indexOf(value) !== -1
+                }
+            }
+        },
+        template: '#validate'
+    })
+    messageApp.mount('#validate-post-demo')
+</script>

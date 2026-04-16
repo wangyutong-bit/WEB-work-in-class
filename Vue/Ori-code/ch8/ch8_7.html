@@ -1,0 +1,31 @@
+<template id="stesting">
+    {{userLocation}}<br>
+    {{userGeolocation.longitude}}
+</template>
+<div id="app">
+    <setup-testing></setup-testing>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({
+        setup() {
+            Vue.provide('location', 'North Pole')
+            Vue.provide('geolocation', {
+                longitude: 90,
+                latitude: 135
+            })
+        }
+    })
+    app.component('setup-testing', {
+        setup() {
+            const userLocation = Vue.inject('location', 'The Universe')
+            const userGeolocation = Vue.inject('geolocation')
+            return {
+                userLocation,
+                userGeolocation
+            }
+        },
+        template: '#stesting'
+    })
+    app.mount('#app')
+</script>

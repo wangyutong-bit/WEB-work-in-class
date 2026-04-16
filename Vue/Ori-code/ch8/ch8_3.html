@@ -1,0 +1,33 @@
+<template id="stesting">
+    {{mybook}}
+</template>
+<div id="app">
+    <setup-testing :abook="book"></setup-testing>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                book: {
+                    id: 1,
+                    title: 'My journey with Vue' 
+                }
+            }
+        }
+    })
+    app.component('setup-testing', {
+        props: ['abook'],
+        setup(props) {// props是响应式的
+           console.log(props.abook.id)
+           mybook = props.abook
+           props.abook.id = 200
+            // 暴露给 template
+            return {
+                mybook
+            }
+        },
+        template: '#stesting'
+    })
+    app.mount('#app')
+</script>

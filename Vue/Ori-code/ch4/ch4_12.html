@@ -1,0 +1,36 @@
+<template id="blog">
+    <ul>
+        <li v-for="post in posts">
+            <!--要使post可为父组件blog-post（slot为子组件）提供的slot内容，
+                可以添加一个<slot>元素并将post绑定为属性-->
+            <slot :b="post"></slot>
+        </li>
+    </ul>
+</template>
+<div id="blog-post-demo">
+   <blog-post>
+       <!--绑定在<slot>元素上的属性post被称为插槽props。
+           可以使用带默认值的v-slot命令来定义这个插槽props的名字-->
+		<!--显示插槽内容-->
+        <template v-slot:default="a">
+            {{ a.b }}
+        </template>
+   </blog-post>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const blogApp = Vue.createApp({})
+    blogApp.component('blog-post', {
+        data() {
+            return {
+                posts: [
+                    { id: 1, title: 'My journey with Vue' },
+                    { id: 2, title: 'Blogging with Vue' },
+                    { id: 3, title: 'Why Vue is so fun' }
+                ]
+            }
+        },
+        template: '#blog'
+    })
+    blogApp.mount('#blog-post-demo')
+</script>

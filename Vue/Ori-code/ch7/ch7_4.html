@@ -1,0 +1,32 @@
+<div id="app">
+    <my-element></my-element>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({})
+    app.component('my-element', {
+        data() {
+            return {
+                value: '初始值'
+            }
+        },
+        //组件my-element的渲染函数相当于模板功能
+        render() {
+            let that = this;//为了防止this的指向发生改变
+            return Vue.h('div', [//children参数
+                //渲染一个输入框，使用value属性和input事件实现v-model双向绑定功能
+                Vue.h('input', {
+                    //将data选项中的value变量绑定到input的value属性上
+                    value: that.value, 
+                    oninput: function(event) {//监听input事件
+                        //当输入框数据变化时同步到组件data选项中value变量
+                        that.value = event.target.value
+                    }
+                }),
+                //渲染一个段落
+                Vue.h('p', 'value: ' + that.value)
+            ])
+        }
+    })
+    app.mount('#app')
+</script>

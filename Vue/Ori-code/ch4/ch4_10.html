@@ -1,0 +1,18 @@
+<template id="child">
+    <slot></slot>
+    <slot></slot>
+</template>
+<div id="app">
+    <child-com>
+        <!--如果这里没有渲染内容，将渲染插槽中的默认内容-->
+        <button>确定</button>
+    </child-com>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({})
+    app.component('child-com', {
+        template: '#child'
+    })
+    app.mount('#app')
+</script>

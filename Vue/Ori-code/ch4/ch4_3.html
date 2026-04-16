@@ -1,0 +1,41 @@
+<!--父组件显示-->
+<template id="parent">
+    <h4>{{ message }}</h4>
+     <!--使用v-bind将父组件parent的data(posts)动态传递给props，children组件只能在parent中-->
+    <children v-for="post in posts" :id="post.id" :title="post.title"></children>
+    <!--将一个对象的所有属性都作为prop传入，与上面一句等价-->
+    <children v-for="post in posts" v-bind="post" ></children>
+</template>
+<!--子组件显示-->
+<template id="children">
+    <h4>{{id}} : {{ title }}</h4>
+</template>
+<div id="message-post-demo">
+    <!--静态传递字符串，父组件就是Vue当前的实例-->
+    <parent message="来自父组件的消息"></parent>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const messageApp = Vue.createApp({})
+    messageApp.component('parent', {
+        data() {
+            return {
+                //posts是对象数组
+                posts: [
+                    { id: 1, title: 'My journey with Vue' },
+                    { id: 2, title: 'Blogging with Vue' },
+                    { id: 3, title: 'Why Vue is so fun' }
+                ]
+            }
+        },
+        props: ['message'],//接收父组件messageApp传递的数据
+        components: {//创建子组件children
+            'children':{
+                props: ['id','title'],//接收父组件parent传递的数据
+                template: '#children'
+            }
+        },
+        template: '#parent'
+    })
+    messageApp.mount('#message-post-demo')
+</script>

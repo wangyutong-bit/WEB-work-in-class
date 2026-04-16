@@ -1,0 +1,36 @@
+<div id="app">
+    <!--调用计算属性的getter方法获取计算属性值-->
+    姓名：{{fullName}}<br>
+    <!-- v-on指令给HTML元素添加一个事件监听器，后续章节讲解。 -->
+    <button v-on:click="changeName">修改计算属性</button>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const CounterApp = {
+        data() {
+            return {
+                firstName: '陈',
+                lastName: '恒'
+            }
+        },
+        methods: {//方法定义
+            changeName(){
+                //计算属性可以使用this引用，当fullName计算属性值发生变化时，调用setter方法
+                this.fullName = '张 三'
+            }
+        },
+        computed: {
+            fullName: {//计算属性
+                get(){
+                    return this.firstName + this.lastName
+                },
+                set(newValue){
+                    var names = newValue.split(' ')
+                    this.firstName = names[0]
+                    this.lastName = names[1]
+                }
+            }
+        }
+    }
+    Vue.createApp(CounterApp).mount('#app')
+</script>

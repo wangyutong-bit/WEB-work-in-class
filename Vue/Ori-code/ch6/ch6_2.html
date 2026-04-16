@@ -1,0 +1,30 @@
+<div id="app">
+    <!--msg是传给指令的参数，a.b是一个包含修饰符的对象-->
+    <span v-demo:msg.a.b="message"></span>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                message: 'hello!'
+            }
+        }
+    })
+    app.directive('demo', {
+        beforeMount(el, binding, vnode) {
+            //测试binding的属性
+            //alert(Object.keys(binding))
+            const keys = []
+            for (const i in vnode) {
+                keys.push(i)
+            }
+            el.innerHTML =
+                'value: ' + binding.value + '<br>' +
+                'argument: ' + binding.arg + '<br>' +
+                'modifiers: ' + JSON.stringify(binding.modifiers) + '<br>' +
+                'vnode keys: ' + keys.join(', ')
+        }
+    })
+    app.mount('#app')
+</script>

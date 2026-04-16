@@ -1,0 +1,7 @@
+<script src="js/vue.global.js"></script>
+<script>
+    const count = Vue.ref(1)
+    const plusOne = Vue.computed(() => count.value + 2)
+    console.log(plusOne.value) // 3
+    plusOne.value++ // 错误！
+</script>

@@ -1,0 +1,29 @@
+<template id="child-app">
+    <button @click="count++">You clicked me {{ count }} times.</button>
+</template>
+<div id="app">
+    父组件的计数器：{{mycount}}<br>
+    <child-counter :parent-count="mycount"></child-counter>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    // 创建一个Vue 应用
+    const app = Vue.createApp({
+        data() {
+            return {
+                mycount: 10
+            }
+        }
+    })
+    app.component('child-counter', {
+        props: ['parentCount'],
+        data() {
+            return {
+                count: this.parentCount
+            }
+        },
+        //组件显示的内容
+        template: '#child-app'
+    })
+    app.mount('#app')
+</script>

@@ -1,0 +1,40 @@
+<div id="counter" class="demo">
+    <!--通过模板获取变量counter的值-->
+    {{ counter }}
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    // 创建一个名为 CounterApp 的 Vue 组件对象
+    const CounterApp = {
+        // data() 方法用来定义组件的响应式数据
+        data() {
+            return {
+                // 定义一个计数器变量，初始值为 0
+                counter: 0
+            }
+        },
+        // mounted 是 Vue 生命周期钩子函数，在组件挂载到 DOM 后立即调用
+        mounted() {
+            // setInterval() 设置每隔 1000 毫秒（1秒）执行一次回调函数
+            setInterval(() => {
+                // 每秒调用 gogo() 方法
+                this.gogo()
+            }, 1000)
+        },
+        // methods 对象中定义组件的方法
+        methods: {
+            // gogo() 方法用来自增计数器
+            gogo() {
+               // 计数器每次加 1
+               this.counter++
+            }
+        }
+    }
+    // 创建 Vue 应用实例，并将 CounterApp 组件挂载到 HTML 中 id 为 counter 的元素上
+    Vue.createApp(CounterApp).mount('#counter')
+</script>
+<style>
+    .demo {
+        font-family: sans-serif;
+    }
+</style>

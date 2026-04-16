@@ -1,0 +1,51 @@
+<head>
+    <!--使用第三方动画库-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/animate.css/3.7.2/animate.min.css">
+</head>
+<!--使用type='transition'以transition过渡时长为准，
+即fade-enter-active和fade-leave-active定义的时长，
+或者绑定属性:duration="{enter:5000,leave:5000}"自定义时长，
+type='transition'与:duration="5000" 二选一；
+使用animate.css必须使用vue的 enter-active-class 和 leave-active-class，
+后面紧跟animated类名和想使用的动画名称；
+appear,appear-active-class实现页面加载的初次动画（初始渲染过渡）。-->
+<div id="app">
+    <transition name='fade' appear :duration="{enter:5000,leave:5000}"
+    enter-active-class='animated swing fade-enter-active' 
+    leave-active-class='animated shake fade-leave-active'
+    appear-active-class='animated swing' 
+   >
+        <div v-if='show'>hello world</div>
+    </transition>
+    <button @click="handleClick">切换显示</button>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                show: true
+            }
+        },
+        methods: {
+            handleClick() {
+                this.show = !this.show
+            }
+        }
+    })
+    app.mount('#app')
+</script>
+<style type="text/css">
+    .fade-enter,
+    .fade-leave-to {
+        opacity: 0;
+    }
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: opacity 5s;
+    }
+    div {
+        font-size: 40px;
+        margin: 50px auto;
+    }
+</style>

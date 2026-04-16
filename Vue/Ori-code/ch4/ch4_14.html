@@ -1,0 +1,21 @@
+<div id="app">
+    <!--5秒钟后才下载组件并展示-->
+    <async-example></async-example>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const blogApp = Vue.createApp({})
+    //定义异步组件
+    const AsyncComp = Vue.defineAsyncComponent(() => //定义defineAsyncComponent方法的返回值
+        new Promise((resolve, reject) => {//返回Promise的工厂函数
+            window.setTimeout(() => {//window.setTimeout只是演示异步
+                resolve({/*从服务器收到加载组件定义后，调用Promise的resolve方法异步下载组件，
+                也可以调用reject(reason)指示加载失败。*/
+                    template: '<div>5秒钟后才展示我!</div>'
+                })
+            }, 5000)
+        })
+    )
+    blogApp.component('async-example', AsyncComp)
+    blogApp.mount('#app')
+</script>

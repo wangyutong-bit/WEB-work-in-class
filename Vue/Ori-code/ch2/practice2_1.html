@@ -1,0 +1,28 @@
+<div id="app">
+    数字1：<input type="text" v-model="num1"><br>
+    数字2：<input type="text" v-model="num2"><br>
+    数字3：<input type="text" v-model="num3"><br>
+    是否构成三角形：{{ isTrangle }}
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const CounterApp = {
+        data() {
+            return {
+                num1: 1,
+                num2: 2,
+                num3: 3
+            }
+        },
+        computed: {
+            isTrangle() {
+                if(Number(this.num1 + this.num2) > this.num3 
+                && Number(this.num1 + this.num3) > this.num2 
+                && Number(this.num2 + this.num3) > this.num1)
+                    return true
+                return false
+            }
+        }
+    }
+    Vue.createApp(CounterApp).mount('#app')
+</script>

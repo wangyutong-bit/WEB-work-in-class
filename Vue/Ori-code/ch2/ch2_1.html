@@ -1,0 +1,27 @@
+<div id="myCart">
+    <!-- v-model指令在表单元素上实现双向数据绑定，后续章节讲解。 -->
+    商品1数量：<input type="text" v-model="num1">
+    商品1价格：<input type="text" v-model="price1"><br>
+    商品2数量：<input type="text" v-model="num2">
+    商品2价格：<input type="text" v-model="price2"><br>
+    商品总价：{{ total }}
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const CounterApp = {
+        data() {
+            return {
+                num1: 1,
+                price1: 10,
+                num2: 2,
+                price2: 20
+            }
+        },
+        computed: {
+            total() {
+                return this.num1*this.price1 + this.num2*this.price2
+            }
+        }
+    }
+    Vue.createApp(CounterApp).mount('#myCart')
+</script>

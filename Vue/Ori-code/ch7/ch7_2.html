@@ -1,0 +1,36 @@
+<div id="app">
+    <anchored-heading :level="1" title="锚点1">Hello world111!</anchored-heading>
+    <anchored-heading :level="2" title="锚点2">Hello world222!</anchored-heading>
+    <anchored-heading :level="3" title="锚点3">Hello world333!</anchored-heading>
+    <anchored-heading :level="4" title="锚点4">Hello world444!</anchored-heading>
+    <anchored-heading :level="5" title="锚点5">Hello world555!</anchored-heading>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({})
+    app.component('anchored-heading', {
+        render() {
+            return Vue.h('h' + this.level,//tag参数
+                [//children参数
+                    Vue.h(
+                        'a',//tag参数
+                        {//props参数
+                            href: '#' + this.title
+                        },
+                        this.$slots.default()//children参数
+                    )
+                ]
+            )
+        },
+        props: {
+            level: {
+                type: Number,
+                required: true
+            },
+            title: {
+                type: String
+            }
+        }
+    })
+    app.mount('#app')
+</script>

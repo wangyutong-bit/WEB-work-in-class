@@ -1,0 +1,10 @@
+<script src="js/vue.global.js"></script>
+<script>
+  const count = Vue.ref(0)
+  Vue.watchEffect(() => console.log(count.value))
+  // -> 打印出 0
+  setInterval(() => {
+  	count.value++
+  	// -> 打印出 1
+  }, 1000)
+</script>

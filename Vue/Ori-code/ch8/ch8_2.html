@@ -1,0 +1,13 @@
+<script src="js/vue.global.js"></script>
+<script>
+    //reactive()方法接收一个普通对象，然后返回该对象的响应式代理
+    let book = Vue.reactive({
+        title: 'SSM + Spring Boot + Vue.js 3全栈开发从入门到实战（微课视频版）' ,
+        author: '陈恒'
+    })
+    //watchEffect()方法根据数据变化去更新视图或调用函数
+    Vue.watchEffect(() => {
+        alert(book.title)
+    })
+    book.title = 'Vue.js 3从入门到实战（微课视频版）'
+</script>

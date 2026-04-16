@@ -1,0 +1,45 @@
+<div id="list-demo" class="demo">
+    <button @click="shuffle">多维列表变换</button>
+    <transition-group name="cell" tag="div" class="container">
+        <span v-for="cell in cells" :key="cell.id" class="cell">{{ cell.number }}</span>
+    </transition-group>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                cells: Array.apply(null, { length: 81 })
+                    .map(function (_, index) {
+                        return {
+                            id: index,
+                            number: index % 9 + 1
+                        }
+                    })
+            }
+        },
+        methods: {
+            shuffle() {
+                this.cells = this.cells.sort(() => { return Math.random() - 0.5; })
+            }
+        }
+    })
+    app.mount('#list-demo')
+</script>
+<style>
+    .container {
+        width: 270px;
+        margin-top: 10px;
+        line-height: 30px;
+        text-align: center;
+    }
+    .cell {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        outline: 1px solid #aaa;
+    }
+    .cell-move {
+        transition: 3s;
+    }
+</style>

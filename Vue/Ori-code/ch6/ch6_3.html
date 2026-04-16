@@ -1,0 +1,34 @@
+<div id="app">
+    <div v-time="nowTime"></div>
+    <div v-time="beforeTime"></div>
+</div>
+<script src="js/vue.global.js"></script>
+<script src="js/time.js"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                //nowTime是目前的时间
+                nowTime: (new Date()).getTime(),
+                //beforeTime是2021-08-08（固定时间）
+                beforeTime: 1628407242588
+            }
+        }
+    })
+    app.directive('time', {
+        //绑定一次性事件等初始化操作
+        beforeMount(el, binding) {
+            el.innerHTML = Time.getFormatTime(binding.value)
+            //定时器1分钟更新1次
+            el.timeout = setInterval(function() {
+                el.innerHTML = Time.getFormatTime(binding.value)
+            }, 60000)
+        },
+        //解除相关绑定
+        unmounted(el) {
+            clearInterval(el.timeout)
+            delete  el.timeout
+        }
+    })
+    app.mount('#app')
+</script>

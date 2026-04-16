@@ -1,0 +1,20 @@
+<head>
+    <meta charset="utf-8">
+    <title>数字输入框</title>
+</head>
+<body>
+    <div id="app">
+        <input-number></input-number>
+    </div>
+    <script src="js/vue.global.js"></script>
+    <script src="js/input-num.js"></script>
+    <script>
+        const app = Vue.createApp({
+            //引入数字输入组件
+            components: {
+                'input-number': inputNumber
+            }
+        })
+        app.mount('#app')
+    </script>
+</body>

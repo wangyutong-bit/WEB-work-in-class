@@ -1,0 +1,41 @@
+<template id="blog">
+    <!--0.1是传递给父组件blogApp的数据，可以不填。然后当在父组件监听这个事件时，可以通过$event访问该数据。如果事件处理函数是一个方法，那么该数据将会作为第一个参数传入该方法（如onEnlargeText）-->
+    <h4>{{id}} : {{ title }}</h4>
+    <button @click="$emit('enlarge-text', 0.1)">变大</button>
+    <button @click="$emit('ensmall-text', 0.1)">变小</button>
+</template>
+<div id="blog-post-demo">
+    <div v-bind:style="{ fontSize: postFontSize + 'em' }">
+     <!--将一个对象的所有属性作为prop传给子组件，@父组件监听事件并更新postFontSize值。-->
+        <!--$event接收子组件传递过来的数据0.1-->
+       <blog-post v-for="post in posts" v-bind="post"
+        @ensmall-text="postFontSize -= $event"  
+        @enlarge-text="onEnlargeText"></blog-post>
+    </div>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const blogApp = Vue.createApp({
+        data() {
+            return {
+                //posts是对象数组
+                posts: [
+                    { id: 1, title: 'My journey with Vue' },
+                    { id: 2, title: 'Blogging with Vue' },
+                    { id: 3, title: 'Why Vue is so fun' }
+                ],
+                postFontSize: 1
+            }
+        },
+        methods: {
+            onEnlargeText(enlargeAmount) {
+                this.postFontSize += enlargeAmount
+            }
+        }
+   })
+    blogApp.component('blog-post', {//定义子组件
+        props: ['id', 'title'],//接收父组件blogApp的两个参数id和title
+        template: '#blog'
+    })
+    blogApp.mount('#blog-post-demo')
+</script>

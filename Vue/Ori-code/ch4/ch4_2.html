@@ -1,0 +1,24 @@
+<div id="partcomponents-demo">
+    <component-b></component-b>
+    <!--component-a失效-->
+    <component-a></component-a>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const ComponentA = {
+        template: '<span>这是私有组件A！</span>'
+    }
+    const ComponentB = {
+        components: {
+            'component-a': ComponentA
+        },
+        template: '<span>这是私有组件B！</span>'
+    }
+    // 创建一个Vue 应用
+    const app = Vue.createApp({
+        components: {
+            'component-b': ComponentB
+        }
+    })
+    app.mount('#partcomponents-demo')
+</script>

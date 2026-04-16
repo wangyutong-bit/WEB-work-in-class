@@ -1,0 +1,25 @@
+<div id="app">
+    时间1：{{ mytime() }}{{ mystop() }}<br>
+    时间2：{{ mytime() }}{{ mystop() }}<br>
+    时间3：{{ yourtime }}{{ mystop() }}<br>
+    时间4：{{ yourtime }}
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const CounterApp = {
+        methods: {
+            mytime() {
+                return Date.now()
+            },
+            mystop() {
+                alert('暂停一下')
+            }
+        },
+        computed: {
+            yourtime(){
+                return Date.now()
+            }
+        }
+    }
+    Vue.createApp(CounterApp).mount('#app')
+</script>

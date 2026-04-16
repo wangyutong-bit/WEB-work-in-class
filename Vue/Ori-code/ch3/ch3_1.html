@@ -1,0 +1,20 @@
+<div id="app">
+    <a v-bind:href="myurl.baiduUrl">去百度</a>
+    <img v-bind:src="myurl.imgUrl"/>
+    <!-- v-bind:可缩写为“:”-->
+    <a :href="myurl.baiduUrl">去百度</a>
+    <img :src="myurl.imgUrl"/>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                myurl: {  
+                    baiduUrl: 'https://www.baidu.com/',
+                    imgUrl:'images/ok.gif'
+                }
+            }
+        }
+    }).mount('#app')
+</script>

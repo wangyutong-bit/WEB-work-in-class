@@ -1,0 +1,19 @@
+<div id="app">
+    <my-element></my-element>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({})
+    app.component('my-element', {
+        //组件my-element的渲染函数相当于模板功能
+        render() {
+            return Vue.h('button', {
+                innerText: '渲染个按钮',
+                onClick(event) {//监听click事件
+                    alert('测试onClick事件')
+                }
+            })
+        }
+    })
+    app.mount('#app')
+</script>

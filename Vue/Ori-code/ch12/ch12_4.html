@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+   <!-- import vue-->
+    <script src="https://unpkg.com/vue@next"></script>
+    <!-- import Element-Plus CSS-->
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <!-- import  Element-Plus JavaScript -->
+    <script src="https://unpkg.com/element-plus"></script>
+	<!-- 直接通过浏览器的 HTML 标签导入 Element Plus的icons-vue（图标），
+		然后就可以使用全局变量 ElementPlusIconsVue了 -->
+	<script src="https://unpkg.com/@element-plus/icons-vue"></script>
+    <title>按钮组件</title>
+  </head>
+  <div id="app">
+	  <el-row>
+		<el-button>Default</el-button>
+		<el-button type="primary">Primary</el-button>
+		<el-button type="success">Success</el-button>
+		<el-button type="info">Info</el-button>
+		<el-button type="warning">Warning</el-button>
+		<el-button type="danger">Danger</el-button>
+		<el-button>中文</el-button>
+	  </el-row>
+
+	  <el-row>
+		<el-button plain>Plain</el-button>
+		<el-button type="primary" plain>Primary</el-button>
+		<el-button type="success" plain>Success</el-button>
+		<el-button type="info" plain>Info</el-button>
+		<el-button type="warning" plain>Warning</el-button>
+		<el-button type="danger" plain>Danger</el-button>
+	  </el-row>
+
+	  <el-row>
+		<el-button round>Round</el-button>
+		<el-button type="primary" round>Primary</el-button>
+		<el-button type="success" round>Success</el-button>
+		<el-button type="info" round>Info</el-button>
+		<el-button type="warning" round>Warning</el-button>
+		<el-button type="danger" round>Danger</el-button>
+	  </el-row>
+
+	  <el-row>
+		<el-button :icon="Search" circle><el-icon><Search/></el-icon></el-button>
+		<el-button type="primary" circle><el-icon><Edit/></el-icon></el-button>
+		<el-button type="success" circle><el-icon><Check/></el-icon></el-button>
+		<el-button type="info" circle><el-icon><Message/></el-icon></el-button>
+		<el-button type="warning" circle><el-icon><Star/></el-icon></el-button>
+		<el-button type="danger" circle><el-icon><Delete/></el-icon></el-button>
+	  </el-row>
+	
+</div>
+<script>
+   const app = Vue.createApp();
+   //注册所有图标
+   for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  	app.component(key, component)
+   }
+   //全局注册ElementPlus
+   app.use(ElementPlus);
+   app.mount("#app");
+</script>

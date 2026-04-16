@@ -1,0 +1,33 @@
+<div id="app">
+    <button @click="changeCom('add')">添加信息</button>&nbsp;
+    <button @click="changeCom('update')">修改信息</button>&nbsp;
+    <button @click="changeCom('delete')">删除信息</button>
+    <component :is="currentCom"></component>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const blogApp = Vue.createApp({
+        data() {
+            return {
+                currentCom: 'add'
+            }
+        },
+        components: {//组件选项中，定义三个局部组件共切换
+            'add': {
+                template: '<div>添加信息展示界面</div>'
+            },
+            'update': {
+                template: '<div>修改信息展示界面</div>'
+            },
+            'delete': {
+                template: '<div>删除信息展示界面</div>'
+            }
+        },
+        methods: {
+            changeCom(com) {
+                this.currentCom = com
+            }
+        }
+    })
+    blogApp.mount('#app')
+</script>

@@ -1,0 +1,15 @@
+<div id="event-handling">
+    <div v-if="flag">一直显示</div>
+    <div v-show="flag">反复无常</div>
+    <button @click="flag=!flag">隐藏/显示</button>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                flag: true
+            }
+        }
+    }).mount('#event-handling')
+</script>

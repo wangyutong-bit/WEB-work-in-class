@@ -1,0 +1,30 @@
+<div id="watch-example">
+    <p>
+        请问一个问题，包含英文字符?:
+        <input v-model="question" />
+    </p>
+    <p>{{ answer }}</p>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const watchExampleVM = Vue.createApp({
+        data() {
+            return {
+                question: '',
+                answer: '这是一个好问题。'
+            }
+        },
+        watch: {//watch选项提供监听数据属性的方法
+            //question方法名与数据属性名question一致
+            question(newQuestion, oldQuestion) {//newQuestion改变时的值，oldQuestion是没改变的值
+                // this.answer = newQuestion
+                // console.log(oldQuestion)
+                if (newQuestion.includes('?')) {
+                    this.answer = "yes"
+                } else {
+                    this.answer = '这是一个好问题。'
+                }
+            }
+        }
+    }).mount('#watch-example')
+</script>

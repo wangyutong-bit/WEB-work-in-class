@@ -1,0 +1,28 @@
+<div id="app">
+    <div>
+        <input type="date" v-model="birthday"> 
+    </div>
+    <div v-birthdayformat="birthday"></div>
+</div>
+<script src="js/vue.global.js"></script>
+<script src="js/birthday.js"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                birthday: '2000-08-08'
+            }
+        }
+    })
+    app.directive('birthdayformat', {
+        //绑定一次性事件等初始化操作
+        beforeMount(el, binding) {
+            el.innerHTML = Birthday.getBirthdayFormat(binding.value)
+        },
+        //在元素的值更新后调用
+        updated(el, binding) {
+            el.innerHTML = Birthday.getBirthdayFormat(binding.value)
+        }
+    })
+    app.mount('#app')
+</script>

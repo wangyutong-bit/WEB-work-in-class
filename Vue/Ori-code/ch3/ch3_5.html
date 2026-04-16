@@ -1,0 +1,14 @@
+<div id="vbind-style">
+    <!--CSS属性名使用驼峰命名或短横线分隔-->
+    <div :style="mystyle">绑定内联样式</div>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    Vue.createApp({
+        computed: {
+            mystyle() {
+                return ['color: red', 'fontSize: 30px']
+            }
+        }
+    }).mount('#vbind-style')
+</script>

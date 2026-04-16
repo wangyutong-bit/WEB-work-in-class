@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello Vue</title>
+    <script src="js/vue.global.js"></script>
+</head>
+<body>
+    <div id="hello-vue" class="demo">
+        {{ message }}
+    </div>
+    
+    <script>
+        const HelloVueApp = {
+            data() {//Vue实例的数据对象
+                return {
+                    message: '党的二十大报告指出，必须坚持在发展中保障和改善民生，鼓励共同奋斗创造美好生活，不断实现人民对美好生活的向往。'
+                }
+            }
+        }
+        Vue.createApp(HelloVueApp).mount('#hello-vue')
+    </script>
+
+    
+    <style>
+    .demo {
+        font-family: sans-serif;
+    }
+    </style>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<template id="stesting">
+    <!-- 模板中使用readersNumber对象会被自动开箱，所以不需要.value  -->
+    <div>{{ readersNumber }} {{ book.title }}</div>
+</template>
+<div id="app">
+    <setup-testing></setup-testing>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const app = Vue.createApp({})
+    app.component('setup-testing', {
+        setup() {
+            //使用ref函数，对值创建一个响应式引用，并返回一个具有value属性的对象
+            const readersNumber = Vue.ref(1000)
+            //reactive()接收一个普通对象，然后返回该对象的响应式代理
+            const book = Vue.reactive({ title: '好书' })
+            // 暴露给 template
+            return {
+                readersNumber,
+                book
+            }
+        },
+        template: '#stesting'
+    })
+    app.mount('#app')
+</script>

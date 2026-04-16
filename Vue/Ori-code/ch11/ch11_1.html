@@ -1,0 +1,24 @@
+<!--视图-->
+<div id="counter">
+    <!--通过模板获取变量counter的值-->
+    {{ counter }}
+    <button @click="increment">递增</button>
+</div>
+<script src="js/vue.global.js"></script>
+<script>
+    const CounterApp = {
+        // 状态
+        data() {
+            return {
+                counter: 0
+            }
+        },
+        // 操作
+        methods: {
+            increment() {
+                this.counter++
+            }
+        }
+    }
+    Vue.createApp(CounterApp).mount('#counter')
+</script>
