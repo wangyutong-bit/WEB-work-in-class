@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>点名系统</title>
+
+    <script>
+        function rollcall()
+        {
+            const studentList = document.getElementById('studentList');
+            const options = studentList.options;
+            const randomIndex = Math.floor(Math.random() * options.length);
+            const selectedStudent = options[randomIndex].text;
+            alert(`点到的学生是：${selectedStudent}`);
+
+        }
+    </script>
+</head>
+<body>
+    <h1>点名系统</h1>
+    <div>
+        <select id="studentList" size="10">
+            <option value="1">学生1</option>
+            <option value="2">学生2</option>
+            <option value="3">学生3</option>
+            <option value="4">学生4</option>
+            <option value="5">学生5</option>
+            <option value="6">学生6</option>
+            <option value="7">学生7</option>
+            <option value="8">学生8</option>
+            <option value="9">学生9</option>
+            <option value="10">学生10</option>
+        </select>
+
+        <button onclick="rollcall()">点名</button>
+    </div>
+</body>
+</html>

@@ -4,21 +4,316 @@
 	<head>
 		<title>web前端开发技术课程网站</title>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="keywords" content="html,css,javascript,web前端开发" />
 		<meta name="description" content="web前端开发技术，html、css、javascipt技术，开发综合实例" />
 		<link href="style2menu.css" rel="stylesheet" type="text/css" />
+		<style type="text/css">
+			/* 基础设置：避免宽高被 padding 和 border 撑大 */
+			* {
+				box-sizing: border-box;
+			}
+
+			/* 去掉页面默认外边距，统一页面底色 */
+			html,
+			body {
+				width: 100%;
+				min-height: 100%;
+			}
+
+			body {
+				margin: 0;
+				background: #f6f7fb;
+				text-align: left;
+			}
+
+			/* wrap：整页容器，纵向铺满整个视口 */
+			.wrap {
+				width: 100%;
+				min-height: 100vh;
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* 外部样式把 #container 固定成了 960px，这里必须用同级选择器再覆盖一次 */
+			#container.wrap {
+				width: 100%;
+				min-height: 100vh;
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* 这些区域都需要横向撑满页面 */
+			#menu_out,
+			#menu,
+			.nav,
+			.main,
+			.footer,
+			.sub ul {
+				width: 100%;
+			}
+
+			#menu_out {
+				margin: 0;
+				padding-left: 0;
+			}
+
+			/* 这些容器在原始样式里也带固定宽度，统一改成 100% 后页面才能真正铺满 */
+			#menu_in,
+			#menu,
+			#nav.nav,
+			#menu_con.sub,
+			#main.main {
+				width: 100%;
+				margin: 0;
+			}
+
+			/* 头图按页面宽度自适应 */
+			#header img {
+				display: block;
+				width: 100%;
+				height: auto;
+			}
+
+			/* 清掉原有菜单区域的内边距，方便重新排版 */
+			#menu_in,
+			.nav,
+			.sub {
+				padding: 0;
+			}
+
+			/* 导航：主导航和二级导航都用 flex 做平均分布 */
+			#menu ul,
+			.sub ul {
+				margin: 0;
+				display: flex;
+			}
+
+			.nav > li,
+			.sub li {
+				float: none;
+				min-width: 0;
+				text-align: center;
+			}
+
+			.nav > li {
+				height: 35px;
+			}
+
+			.sub li {
+				height: 22px;
+				margin-top: 8px;
+			}
+
+			.nav > li:not(.menu_line),
+			.sub li:not(.menu_line2) {
+				flex: 1;
+			}
+
+			.menu_line,
+			.menu_line2 {
+				display: none;
+			}
+
+			/* nav：顶部主导航，保留原来的图片按钮样式 */
+			/* a 放左半张背景图，span 放右半张背景图，两者拼成原来的按钮框 */
+			.nav a,
+			.sub a {
+				float: none;
+				display: inline-block;
+			}
+
+			.nav a span,
+			.sub a span {
+				float: left;
+				display: block;
+				text-align: center;
+				white-space: nowrap;
+			}
+
+			.nav a {
+				height: 35px;
+				padding-left: 6px;
+				background: url("images/menu_on_left.gif") no-repeat left top;
+			}
+
+			.nav a span {
+				padding: 11px 14px 10px 10px;
+				line-height: 14px;
+				text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+				background: url("images/menu_on_right.gif") no-repeat right top;
+			}
+
+			/* 主导航悬停和当前选中项都切到底部背景图，保留原网站的高亮状态 */
+			.nav a:hover,
+			.nav .nav_on {
+				background: url("images/menu_on_left.gif") no-repeat left bottom;
+			}
+
+			.nav a:hover span,
+			.nav .nav_on span {
+				color: #ff7800;
+				text-shadow: none;
+				background: url("images/menu_on_right.gif") no-repeat right bottom;
+			}
+
+			/* sub：第二排子导航，继续沿用原来的小按钮样式 */
+			.sub a {
+				height: 22px;
+				padding-left: 3px;
+				background: url("images/menu_on_left2.gif") no-repeat left top;
+			}
+
+			.sub a span {
+				padding: 6px 10px 4px;
+				line-height: 12px;
+				background: url("images/menu_on_right2.gif") no-repeat right top;
+			}
+
+			/* 二级导航沿用同样的思路，只是换成较小的一套按钮素材 */
+			.sub a:hover {
+				background: url("images/menu_on_left2.gif") no-repeat left bottom;
+			}
+
+			.sub a:hover span {
+				color: #ff7800;
+				background: url("images/menu_on_right2.gif") no-repeat right bottom;
+			}
+
+			/* main：左侧图片 + 右侧 iframe 内容区 */
+			.main {
+				flex: 1;
+				display: flex;
+				gap: 12px;
+				min-height: 0;
+			}
+
+			/* 再写一次带 id 的选择器，是为了压过外部样式里给 #main 的固定高度 */
+			#main.main {
+				flex: 1;
+				display: flex;
+				gap: 12px;
+				min-height: 0;
+				height: auto;
+			}
+
+			.left,
+			.right {
+				float: none;
+			}
+
+			.left {
+				width: 298px;
+				flex: 0 0 298px;
+			}
+
+			/* 左侧图片栏保留原来的 298px，避免图片素材被横向拉得太宽 */
+			#leftbar.left {
+				width: 298px;
+				flex: 0 0 298px;
+			}
+
+			.left img,
+			.right iframe {
+				display: block;
+				width: 100%;
+				height: 100%;
+				min-height: 300px;
+			}
+
+			.right {
+				flex: 1;
+			}
+
+			/* 右侧内容区占满剩余空间，iframe 跟着父容器一起拉伸 */
+			#right.right {
+				width: auto;
+				flex: 1;
+			}
+
+			#right.right iframe {
+				width: 100%;
+				height: 100%;
+				min-height: 300px;
+			}
+
+			/* footer：底部区域和下拉框样式 */
+			.footer {
+				padding: 16px 12px;
+				height: auto;
+			}
+
+			/* 底部同样要撑满页面宽度，不能继续沿用旧样式里的固定宽度 */
+			.bottom.footer {
+				width: 100%;
+				margin: 0;
+			}
+
+			/* 下拉框单独美化成圆角胶囊，点击区域更清晰 */
+			.footer select {
+				height: 36px;
+				padding: 0 14px;
+				margin: 0 8px 8px 0;
+				outline: none;
+				border: 1px solid rgba(255, 255, 255, 0.5);
+				border-radius: 999px;
+				background: rgba(255, 255, 255, 0.18);
+				color: #ffffff;
+			}
+
+			.footer option {
+				color: #333333;
+			}
+
+			/* 平板及以下：左右结构改成上下排列 */
+			/* 900px 以下改成上下布局，避免左右两栏在窄屏里互相挤压 */
+			@media (max-width: 900px) {
+				.main {
+					flex-direction: column;
+				}
+
+				.left,
+				.right {
+					width: 100%;
+					flex: none;
+				}
+
+				.left img,
+				.right iframe {
+					min-height: 280px;
+				}
+			}
+
+			/* 手机：导航允许换行，底部下拉框单列显示 */
+			/* 640px 以下允许导航换行，底部下拉框改成单列 */
+			@media (max-width: 640px) {
+				.nav,
+				.sub ul {
+					flex-wrap: wrap;
+				}
+
+				.footer select {
+					width: 100%;
+					margin-right: 0;
+				}
+			}
+		</style>
 		<script type="text/javascript" src="qiehuan.js"></script>
 		<script type="text/javascript" src="switchpic.js"></script>
 	</head>
 	<body onload="init();">
-		<div id="container" class="">
+		<!-- 页面总容器：把头图、导航、主体和底部按从上到下的顺序组织起来 -->
+		<div id="container" class="wrap">
 			<div id="header" class="">
 				<img src="images/web_logo.jpg" alt="">
 			</div>
 			<div id="menu_out">
 				<div id="menu_in">
 					<div id="menu">
-						<ul id="nav">
+						<!-- 保留原 id 给 qiehuan.js 用，class 只负责当前页面样式 -->
+						<ul id="nav" class="nav">
 							<li><a class="nav_on" id="mynav0" onmouseover="javascript:qiehuan(0)" href="web_first.html"
 									target="framebody"><span>首 页</span></a></li>
 							<li class="menu_line"></li>
@@ -46,7 +341,8 @@
 							<li><a class="nav_off" id="mynav8" onmouseover="javascript:qiehuan(8)"
 									href="#"><span>网络资源</span></a></li>
 						</ul>
-						<div id="menu_con">
+						<!-- 二级导航：根据当前主导航显示对应的子栏目 -->
+						<div id="menu_con" class="sub">
 							<div id="qh_con0" style="display: block">
 								<ul>
 									<li><a href="#"><span>课程发展</span></a></li>
@@ -135,19 +431,21 @@
 					</div>
 				</div>
 			</div>
-			<div id="main">
-				<div id="leftbar" class="">
+			<!-- 主体区域：左侧图片展示，右侧 iframe 加载具体课程内容 -->
+			<div id="main" class="main">
+				<div id="leftbar" class="left">
 					<a href="#"><img id="pic" src="images/example1.png" border="0" alt="" onmouseover="pause();"
 							onmouseout="reStart();"></a>
 
 				</div>
-				<div id="right" class="">
+				<div id="right" class="right">
 					<iframe name="framebody" src="web_first.html"></iframe>
 				</div>
 
 			</div>
 			<!-- 页面底部设计 -->
-			<div class="bottom">
+			<!-- 页面底部：友情链接下拉框和版权信息 -->
+			<div class="bottom footer">
 				<ul>
 					<li><strong>友情链接：</strong>
 						<select size="1" name="d1" onchange="window.open(this.options[this.selectedIndex].value)">

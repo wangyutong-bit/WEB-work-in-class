@@ -3,45 +3,118 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
+		<!-- 允许页面按设备实际宽度渲染，配合全屏自适应布局 -->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>DOM对象操作方法</title>
 		<style type="text/css">
-			* {padding: 0;margin: 0;}
-			#container {
-				background: url("image-16-4-1.png") no-repeat center top;
-				width: 1000px;height: 810px;margin: 0 auto;
-				box-shadow: 0px 0px 5px 5px #F1F2F3;padding: 10px;
+			* {padding: 0;margin: 0;box-sizing: border-box;}
+			html, body {height: 100%;}
+			/* 让页面背景和外层容器铺满整个视口 */
+			body {
+				min-height: 100vh;
+				background-color: #eef2f6;
 			}
-			#header {width: 100%;height: 360px;}
+			#container {
+				background: url("image-16-4-1.png") no-repeat center top / cover;
+				width: 100%;
+				min-height: 100vh;
+				margin: 0;
+				box-shadow: 0 0 18px rgba(0, 0, 0, 0.12);
+				padding: 10px 20px 24px;
+				display: flex;
+				flex-direction: column;
+			}
+			#header {width: 100%;height: clamp(240px, 42vh, 360px);flex-shrink: 0;}
 			.content {display: none;}
-      .active {display: block;}
-      .main {width: 1000px;height: 310px;position: relative;}
+			.active {display: block;}
+			/* 主工作区改为自适应宽度，不再锁死在 1000px */
+			.main {width: 100%;min-height: 320px;position: relative;flex: 1;}
 			.menu {
-				display: inline-block;float: left;width: 250px;
+				display: inline-block;float: left;width: 25%;
 				height: 50px;background-color: #F1F2F3;
 			}
-			a {
-				display: inline-block;text-decoration: none;width: 250px;
+			/* 只作用于顶部菜单链接，避免影响页脚链接样式 */
+			.menu > a {
+				display: inline-block;text-decoration: none;width: 100%;
 				height: 30px;padding: 10px 0px;text-align: center;font-size: 18px;
 			}
-      a:hover {background-color: #FE1111;color: white;}
+			.menu > a:hover {background-color: #FE1111;color: white;}
+			/* 展开的内容层改为跟随容器全宽 */
 			.content {
-				width: 960px;height: 240px;padding: 10px 20px;
+				width: 100%;min-height: 240px;padding: 10px 20px;
 				position: absolute;top: 50px;left: 0;
 			}
-      .menu:hover .content {display: inline-block;background-color: white;}
-	   	.content p {
-							text-indent: 2em;font-size: 18px;line-height: 1.5em;
+			.menu:hover .content {display: block;background-color: rgba(255, 255, 255, 0.96);}
+			.content p {
+				text-indent: 2em;font-size: 18px;line-height: 1.5em;
 				column-count: 3;column-gap: 20px;column-rule: 2px dashed #FE1111;
 			}
 			form table {
 				margin: 30px auto;box-shadow: 0px 0px 5px 5px #F1F2F3;
+				background-color: rgba(255, 255, 255, 0.94);
+				max-width: 100%;
 			}
 			#info {text-align: center;padding: 20px;}
-			select {width: 300px;height: 180px;font-size: 18px;}
-			input {width: 135px;height: 40px;border-radius: 25px;font-size: 22px;}
-			input:hover {background-color: red;color: white;}
-			#footer {text-align: center;margin: 0 auto;}
+			#info img, #footer img {max-width: 100%;height: auto;}
+			select {width: min(300px, 100%);height: 180px;font-size: 18px;}
+			/* 表单按钮改成透明胶囊风格 */
+			input[type="button"] {
+				width: 148px;
+				height: 44px;
+				border-radius: 999px;
+				font-size: 20px;
+				color: #a71919;
+				background: rgba(255, 255, 255, 0.12);
+				border: 1.5px solid rgba(167, 25, 25, 0.45);
+				box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28), 0 10px 24px rgba(128, 16, 16, 0.12);
+				backdrop-filter: blur(8px);
+				-webkit-backdrop-filter: blur(8px);
+				cursor: pointer;
+				transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+			}
+			input[type="button"]:hover {
+				background: rgba(254, 17, 17, 0.14);
+				color: #8f1010;
+				border-color: rgba(167, 25, 25, 0.7);
+				box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.34), 0 14px 30px rgba(128, 16, 16, 0.18);
+				transform: translateY(-1px);
+			}
+			input[type="button"]:active {
+				transform: translateY(1px);
+				box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22), 0 6px 16px rgba(128, 16, 16, 0.16);
+			}
+			input[type="button"]:focus-visible {
+				outline: 2px solid rgba(254, 17, 17, 0.35);
+				outline-offset: 2px;
+			}
+			#footer {text-align: center;margin: 0 auto;width: 100%;padding-top: 12px;}
 			#footer p {padding: 0;margin: 0;}
+			/* 恢复页脚内链接为普通行内元素，避免继承菜单按钮宽高 */
+			#footer a {
+				display: inline;
+				width: auto;
+				height: auto;
+				padding: 0;
+				font-size: inherit;
+			}
+			/* 不同屏宽下继续保持“全屏但不拥挤”的布局 */
+			@media (max-width: 1100px) {
+				.content p {column-count: 2;}
+			}
+			@media (max-width: 900px) {
+				#container {padding: 10px 12px 20px;}
+				.menu {width: 50%;}
+				.main {min-height: 380px;}
+				.content {top: 100px;}
+				.content p {column-count: 1;}
+			}
+			@media (max-width: 640px) {
+				#header {height: 200px;}
+				.menu {width: 100%;}
+				.main {min-height: 560px;}
+				.content {top: 200px;padding: 10px 12px;}
+				form table {transform: scale(0.95);transform-origin: top center;}
+			}
 		</style>
 		<script type="text/javascript">
 			function $(id) {return document.getElementById(id);}
