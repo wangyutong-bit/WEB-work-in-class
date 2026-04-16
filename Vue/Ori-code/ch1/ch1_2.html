@@ -33,6 +33,25 @@
     // 创建 Vue 应用实例，并将 CounterApp 组件挂载到 HTML 中 id 为 counter 的元素上
     Vue.createApp(CounterApp).mount('#counter')
 </script>
+ <div id="app">
+        <h2>个人信息</h2>
+        <p><b>姓名：</b>{{ name }}</p>
+        <p><b>年龄：</b>{{ age }}</p>
+        <p><b>职位：</b>{{ position }}</p>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        createApp({
+            data() {
+                return {
+                    name: "王宇桐",
+                    age: 20,
+                    position: "学生",
+                }
+            }
+        }).mount('#app')
+    </script>
 <style>
     .demo {
         font-family: sans-serif;

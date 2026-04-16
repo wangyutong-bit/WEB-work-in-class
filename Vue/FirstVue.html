@@ -3,9 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>个人信息</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
-    
+    <div id="app">
+        <h2>个人信息</h2>
+        <p><b>姓名：</b>{{ name }}</p>
+        <p><b>年龄：</b>{{ age }}</p>
+        <p><b>职位：</b>{{ position }}</p>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        createApp({
+            data() {
+                return {
+                    name: "王宇桐",
+                    age: 20,
+                    position: "学生",
+                }
+            }
+        }).mount('#app')
+    </script>
 </body>
 </html>
