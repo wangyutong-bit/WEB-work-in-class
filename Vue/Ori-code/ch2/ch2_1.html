@@ -1,27 +1,46 @@
 <div id="myCart">
-    <!-- v-model指令在表单元素上实现双向数据绑定，后续章节讲解。 -->
+    <!--
+        第1步：先准备一个页面区域，id="myCart" 是 Vue 之后要挂载的位置。
+        第2步：给输入框加上 v-model，把输入框和 data 里的变量做双向绑定。
+        这样输入框内容变化时，num1、price1、num2、price2 也会跟着变化。
+    -->
     商品1数量：<input type="text" v-model="num1">
     商品1价格：<input type="text" v-model="price1"><br>
     商品2数量：<input type="text" v-model="num2">
     商品2价格：<input type="text" v-model="price2"><br>
     商品总价：{{ total }}
 </div>
+
 <script src="js/vue.global.js"></script>
 <script>
+    // 第3步：创建一个 Vue 应用配置对象。
     const CounterApp = {
+        // 第4步：data() 返回页面中要用到的响应式数据。
+        // 这些数据会和模板中的输入框、插值表达式自动关联。
         data() {
             return {
+                // 商品1的数量，初始值为 1
                 num1: 1,
+                // 商品1的价格，初始值为 10
                 price1: 10,
+                // 商品2的数量，初始值为 2
                 num2: 2,
+                // 商品2的价格，初始值为 20
                 price2: 20
             }
         },
+
+        // 第5步：computed 用来定义“计算属性”。
+        // total 依赖前面的数量和价格，只要相关数据变化，它就会自动重新计算。
         computed: {
             total() {
-                return this.num1*this.price1 + this.num2*this.price2
+                // 第6步：计算总价 = 商品1数量*商品1价格 + 商品2数量*商品2价格
+                return this.num1 * this.price1 + this.num2 * this.price2
             }
         }
     }
+
+    // 第7步：创建 Vue 应用，并挂载到页面中的 #myCart。
+    // 挂载后，这一块内容就由 Vue 接管，数据变化时页面会自动更新。
     Vue.createApp(CounterApp).mount('#myCart')
 </script>
