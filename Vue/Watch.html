@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch</title>
+</head>
+<body>
+    <div id="app">
+        用户名：<input type="text" v-model.trim="username"><br>
+        <span class="msg" :class="usernameClass">{{ usernameMsg }}</span><br><br>
+
+        密码：<input type="password" v-model="password"><br>
+        <span class="msg" :class="passwordClass">{{ passwordMsg }}</span><br><br>
+
+        确认密码：<input type="password" v-model="confirmPassword"><br>
+        <span class="msg" :class="confirmClass">{{ confirmMsg }}</span>
+    </div>
+
+    <script src="Ori-code/ch2/js/vue.global.js"></script>
+    <script>
+        const CounterApp = {
+            data() {
+                return {
+                    username: '',
+                    password: '',
+                    confirmPassword: '',
+                    usernameMsg: '请输入用户名',
+                    passwordMsg: '请输入密码',
+                    confirmMsg: '确认密码'
+                }
+            },
+
+            computed: {
+                usernameValid() {
+                    if (this.username.length < 6 || this.username.length > 16) {
+                        return false
+                    }
+
+                    for (let i = 0; i < this.username.length; i++) {
+                        const ch = this.username[i]
+                        const isLetter =
+                            (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
+                        const isNumber = ch >= '0' && ch <= '9'
+
+                        if (!isLetter && !isNumber) {
+                            return false
+                        }
+                    }
+
+                    return true
+                },
+
+                passwordValid() {
+                    return this.password.length >= 8
+                },
+
+                confirmValid() {
+                    return this.confirmPassword !== '' && this.confirmPassword === this.password
+                },
+
+                formValid() {
+                    return this.usernameValid && this.passwordValid && this.confirmValid
+                },
+
+                usernameClass() {
+                    return this.usernameValid ? 'ok' : 'error'
+                },
+
+                passwordClass() {
+                    return this.passwordValid ? 'ok' : 'error'
+                },
+
+                confirmClass() {
+                    return this.confirmValid ? 'ok' : 'error'
+                }
+            },
+
+            watch: {
+                username(newVal) {
+                    if (newVal === '') {
+                        this.usernameMsg = '用户名'
+                        return
+                    }
+
+                    if (newVal.length < 6 || newVal.length > 16) {
+                        this.usernameMsg = '必须在 6-16 位之间'
+                        return
+                    }
+
+                    for (let i = 0; i < newVal.length; i++) {
+                        const ch = newVal[i]
+                        const isLetter =
+                            (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
+                        const isNumber = ch >= '0' && ch <= '9'
+
+                        if (!isLetter && !isNumber) {
+                            this.usernameMsg = '只能由字母和数字组成'
+                            return
+                        }
+                    }
+
+                    this.usernameMsg = '格式正确'
+                },
+
+                password(newVal) {
+                    if (newVal === '') {
+                        this.passwordMsg = '请输入密码'
+                    } else if (newVal.length < 8) {
+                        this.passwordMsg = '不能少于 8 位'
+                    } else {
+                        this.passwordMsg = '密码格式正确'
+                    }
+
+                    if (this.confirmPassword === '') {
+                        this.confirmMsg = '请再次输入密码'
+                    } else if (this.confirmPassword === newVal) {
+                        this.confirmMsg = '两次密码一致'
+                    } else {
+                        this.confirmMsg = '两次密码不一致'
+                    }
+                },
+
+                confirmPassword(newVal) {
+                    if (newVal === '') {
+                        this.confirmMsg = '请再次输入密码'
+                    } else if (newVal === this.password) {
+                        this.confirmMsg = '两次密码一致'
+                    } else {
+                        this.confirmMsg = '两次密码不一致'
+                    }
+                }
+            }
+        }
+
+        Vue.createApp(CounterApp).mount('#app')
+    </script>
+</body>
+
+</html>
