@@ -1,26 +1,26 @@
-<template id="button-counter">
-    <button @click="count++">你点击了我 {{ count }} 次.</button>
+<template id="button-counter">//创建事件监听器
+    <button @click="count++">你点击了我 {{ count }} 次.</button>//每次点击按钮时，count 都会增加 1。
 </template>
-<div id="components-demo">
+<div id="components-demo">//使用组件
     <!--在模板中任意使用组件-->
     <!--每个组件都各自独立维护它的count。因为每用一次组件，就会有一个它的新实例被创建。-->
-    <button-counter></button-counter><br><br>
-    <button-counter></button-counter><br><br>
-    <button-counter></button-counter>
+    <button-counter></button-counter><br><br>//一个
+    <button-counter></button-counter><br><br>//二个
+    <button-counter></button-counter>//三个
 </div>
-<script src="js/vue.global.js"></script>
+<script src="js/vue.global.js"></script>//引入Vue.js库
 <script>
     // 创建一个Vue 应用
-    const app = Vue.createApp({})
+    const app = Vue.createApp({})//创建一个Vue应用实例
     // 定义一个名为 button-counter 的全局组件(注册)
-    app.component('button-counter', {
-        data() {
-            return {
-                count: 0
+    app.component('button-counter', {//组件的选项对象
+        data() {//组件的响应式数据
+            return {//组件的状态
+                count: 0//初始值为0
             }
         },
         //组件显示的内容
-        template: '#button-counter'
+        template: '#button-counter'//组件的模板，使用了上面定义的模板字符串
     })
-    app.mount('#components-demo')
+    app.mount('#components-demo')//挂载Vue应用到页面上的元素，id为components-demo的元素
 </script>
