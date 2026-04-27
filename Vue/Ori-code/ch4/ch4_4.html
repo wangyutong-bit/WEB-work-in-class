@@ -1,7 +1,7 @@
-<template id="child-app">
-    <button @click="count++">You clicked me {{ count }} times.</button>
+<template id="child-app">//创建全局组件
+    <button @click="count++">You clicked me {{ count }} times.</button>//组件显示的内容
 </template>
-<div id="app">
+<div id="app">//父组件的内容
     父组件的计数器：{{mycount}}<br>
     <child-counter :parent-count="mycount"></child-counter>
 </div>
