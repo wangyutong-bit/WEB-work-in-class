@@ -1,55 +1,78 @@
 <div id="buyer">
+    <!-- 显示买方接收到的卖方消息。 -->
     <h1>显示卖方消息：{{ message1 }}</h1>
+    <!-- 点击按钮时调用 transferb 方法，把买方消息发送给卖方。 -->
     <button @click="transferb">我是买方，向卖方传递信息</button>
 </div>
 <div id="seller">
+    <!-- 显示卖方接收到的买方消息。 -->
     <h1>显示买方消息：{{ message2 }}</h1>
+    <!-- 点击按钮时调用 transfers 方法，把卖方消息发送给买方。 -->
     <button @click="transfers">我是卖方，向买方传递信息</button>
 </div>
+<!-- 引入 Vue 3 的全局构建文件。 -->
 <script src="js/vue.global.js"></script>
+<!-- 引入 mitt 事件总线库。 -->
 <script src="js/mitt.js"></script>
 <script>
+    // 创建 mitt 事件总线，用于两个 Vue 应用之间传递消息。
     const bus = mitt()
-    //买方
+    // 创建买方 Vue 应用实例。
     const buyer = Vue.createApp({
+        // 定义买方应用的数据。
         data() {
+            // 返回模板中可以访问的数据对象。
             return {
+                // 保存买方接收到的卖方消息，初始值为空字符串。
                 message1: ''
             }
         },
+        // 定义买方应用的方法。
         methods: {
+            // 定义买方向卖方发送消息的方法。
             transferb() {
-                //用emit触发事件传值
+                // 触发 on-message1 事件，并把买方消息作为参数传出去。
                 bus.emit('on-message1', '来自买方的信息')
             }
         },
-        mounted(){
-            //监听
-            bus.on('on-message2', (msg) => {//(msg)相当于function (msg)
+        // 在买方应用挂载完成后执行。
+        mounted() {
+            // 监听 on-message2 事件，用于接收卖方发送过来的消息。
+            bus.on('on-message2', (msg) => {
+                // 把接收到的卖方消息保存到 message1 中，并更新页面显示。
                 this.message1 = msg
             })
         }
     })
+    // 将买方 Vue 应用挂载到 id 为 buyer 的元素上。
     buyer.mount('#buyer')
-    //卖方
+    // 创建卖方 Vue 应用实例。
     const seller = Vue.createApp({
+        // 定义卖方应用的数据。
         data() {
+            // 返回模板中可以访问的数据对象。
             return {
+                // 保存卖方接收到的买方消息，初始值为空字符串。
                 message2: ''
             }
         },
+        // 定义卖方应用的方法。
         methods: {
+            // 定义卖方向买方发送消息的方法。
             transfers() {
-                //用emit触发事件传值
+                // 触发 on-message2 事件，并把卖方消息作为参数传出去。
                 bus.emit('on-message2', '来自卖方的信息')
             }
         },
-        mounted(){
-            //监听
-            bus.on('on-message1', (msg) => {//(msg)相当于function (msg)
+        // 在卖方应用挂载完成后执行。
+        mounted() {
+            // 监听 on-message1 事件，用于接收买方发送过来的消息。
+            bus.on('on-message1', (msg) => {
+                // 把接收到的买方消息保存到 message2 中，并更新页面显示。
                 this.message2 = msg
             })
         }
     })
+    // 将卖方 Vue 应用挂载到 id 为 seller 的元素上。
     seller.mount('#seller')
 </script>

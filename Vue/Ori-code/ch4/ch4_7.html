@@ -1,25 +1,38 @@
 <template id="custom">
-    <!--为了让子组件正常工作，子组件内的 <input> 必须：将其value属性绑定到一个名为modelValue的props上在其input事件被触发时，将新的值通过自定义的update:modelValue事件传递-->
+    <!-- 定义 custom-input 组件使用的模板。 -->
+    <!-- 为了让子组件支持 v-model，需要把输入框的 value 绑定到 modelValue，并在输入时抛出 update:modelValue 事件。 -->
     <input :value="modelValue" @input="$emit('update:modelValue', $event.target.value)">
 </template>
 <div id="vmodel-post-demo">
+    <!-- 显示当前 data 中 searchText 的值。 -->
     {{searchText}}<br><br>
+    <!-- 使用 v-model 将 searchText 与 custom-input 组件进行双向绑定。 -->
     <custom-input v-model="searchText"></custom-input><br><br>
-    <!--这两个子组件等价-->
+    <!-- 下面这种写法和上面的 v-model 写法等价。 -->
+    <!-- 把 searchText 传给子组件的 modelValue 属性，并监听 update:modelValue 事件更新 searchText。 -->
     <custom-input :model-value="searchText" @update:model-value="searchText = $event"></custom-input>
 </div>
+<!-- 引入 Vue 3 的全局构建文件。 -->
 <script src="js/vue.global.js"></script>
 <script>
+    // 创建一个 Vue 应用实例。
     const blogApp = Vue.createApp({
+        // 定义当前应用使用的数据。
         data() {
+            // 返回模板中可以访问的数据对象。
             return {
+                // 设置输入框双向绑定的初始文本。
                 searchText: '陈恒'
             }
         }
     })
+    // 注册名为 custom-input 的全局组件。
     blogApp.component('custom-input', {
+        // 声明组件接收父组件传入的 modelValue 属性。
         props: ['modelValue'],
+        // 指定组件使用 id 为 custom 的 template 模板。
         template: '#custom'
     })
+    // 将 Vue 应用挂载到 id 为 vmodel-post-demo 的页面元素上。
     blogApp.mount('#vmodel-post-demo')
 </script>
