@@ -28,18 +28,18 @@ var Time = {
         //获得今天0点0分0秒的时间戳
         var today = this.getTodayUnix();
         //转换秒级时间
-        var timer = (now - timeStamp) / 1000;
+        var timer = (timeStamp-now) / 1000;
         var timeFormat = '';
         if (timer <= 0) {
             timeFormat = '刚刚';
         } else if (Math.floor(timer / 60) <= 0) { //1分钟以前显示刚刚
             timeFormat = '刚刚';
         } else if (timer < 3600) {//1分钟-1小时，显示XX分钟前
-            timeFormat = Math.floor(timer / 60) + '分钟前';
+            timeFormat = Math.floor(timer / 60) + '分钟后';
         } else if (timer >= 3600 && (timeStamp - today) >= 0) {//1小时-1天，显示XX小时前
-            timeFormat = Math.floor(timer / 3600) + '小时前';
+            timeFormat = Math.floor(timer / 3600) + '小时后';
         } else if (timer / 86400 <= 31) {//1天-1个月，显示XX天前
-            timeFormat = Math.ceil(timer / 86400) + '天前';
+            timeFormat = Math.ceil(timer / 86400) + '天后';
         } else {//大于1个月，显示XX年XX月XX日
             timeFormat = this.getNormalDate(timeStamp);
         }

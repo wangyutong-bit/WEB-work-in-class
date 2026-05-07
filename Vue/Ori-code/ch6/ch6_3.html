@@ -1,6 +1,6 @@
 <div id="app">
     <div v-time="nowTime"></div>
-    <div v-time="beforeTime"></div>
+    <div v-time="aftertime"></div>
 </div>
 <script src="js/vue.global.js"></script>
 <script src="js/time.js"></script>
@@ -10,8 +10,8 @@
             return {
                 //nowTime是目前的时间
                 nowTime: (new Date()).getTime(),
-                //beforeTime是2021-08-08（固定时间）
-                beforeTime: 1628407242588
+                //aftertime是2028-06-01（固定时间）
+                aftertime: 1843286400000
             }
         }
     })
