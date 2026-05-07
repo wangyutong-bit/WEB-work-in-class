@@ -11,8 +11,8 @@
             }
         }
     })
-    app.directive('demo', {
-        beforeMount(el, binding, vnode) {
+    app.directive('demo', { //自定义指令demo，在模板中使用v-demo
+        beforeMount(el, binding, vnode) { //挂载前
             //测试binding的属性
             //alert(Object.keys(binding))
             const keys = []
