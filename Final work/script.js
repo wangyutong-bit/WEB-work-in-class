@@ -78,13 +78,29 @@ const MusicPlayer = {
         PlayerControls,
         TrackList
     },
+    setup() {
+        const audioOk = !!(typeof HTMLMediaElement !== 'undefined');
+        const storageOk = !!(typeof localStorage !== 'undefined');
+        
+        let volume = 0.8;
+        if (storageOk) {
+            const saved = localStorage.getItem('musicPlayerVolume');
+            if (saved) {
+                volume = parseFloat(saved);
+            }
+        }
+        
+        console.log('Music Player initialized:', { audioOk, storageOk });
+        
+        return { volume };
+    },
     data() {
         return {
             tracks: [],
             currentIndex: 0,
             currentTime: 0,
             duration: 0,
-            volume: 0.8,
+            volume: this.volume || 0.8,
             isPlaying: false
         };
     },
@@ -192,6 +208,11 @@ const MusicPlayer = {
             if (audio) {
                 audio.volume = this.volume;
             }
+            
+            // 保存音量设置到本地存储
+            if (typeof localStorage !== 'undefined') {
+                localStorage.setItem('musicPlayerVolume', this.volume);
+            }
         },
         updateDuration() {
             const audio = this.$refs.audio;
@@ -208,6 +229,7 @@ const MusicPlayer = {
     beforeUnmount() {
         this.tracks.forEach((track) => URL.revokeObjectURL(track.url));
     },
+    /* 字符串模板，Vue在渲染组件时会把它当作模板解析并生成 DOM */
     template: `
         <player-panel>
             <template #heading>
@@ -288,7 +310,7 @@ const MusicPlayer = {
         </player-panel>
     `
 };
-
+//挂载APP
 createApp({
     components: {
         MusicPlayer
