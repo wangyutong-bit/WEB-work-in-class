@@ -5,6 +5,7 @@
       <router-link to="/users">Users</router-link>
       <router-link to="/about">About</router-link>
       <router-link to="/proudects">Proudects</router-link>
+      <router-link to = "/login">登陆界面</router-link>
     </nav>
     <router-view/>
   </div>

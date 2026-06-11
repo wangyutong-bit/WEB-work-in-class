@@ -1,6 +1,6 @@
 <template>
   <nav>
-    <router-link to="/login">Login</router-link> |
+    <router-link to="/Login">Login</router-link> |
     <router-link to="/main">Main</router-link>|
     <router-link to="/home">Home</router-link>
   </nav>
@@ -15,7 +15,7 @@
   text-align: center;
   color: #2c3e50;
 }
-
+·
 nav {
   padding: 30px;
 }
