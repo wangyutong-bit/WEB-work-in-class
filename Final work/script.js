@@ -1,8 +1,11 @@
-const { createApp } = Vue;
+const { createApp, ref, computed, watch, onMounted, onBeforeUnmount, nextTick } = Vue;
 
+/* ================================================================
+   PlayerPanel — layout shell with named slots
+   ================================================================ */
 const PlayerPanel = {
     template: `
-        <main class="player">
+        <main class="player" role="region" aria-label="Music Player">
             <slot name="heading"></slot>
             <slot></slot>
             <slot name="footer"></slot>
@@ -10,6 +13,10 @@ const PlayerPanel = {
     `
 };
 
+/* ================================================================
+   PlayerControls — prev / play-pause / next
+   Pure presentational: emits events, owns no playback logic
+   ================================================================ */
 const PlayerControls = {
     props: {
         disabled: Boolean,
@@ -17,31 +24,40 @@ const PlayerControls = {
     },
     emits: ["prev", "toggle", "next"],
     template: `
-        <div class="controls">
-            <button type="button" :disabled="disabled" @click="$emit('prev')">Prev</button>
+        <div class="controls" role="group" aria-label="Playback controls">
+            <button
+                type="button"
+                :disabled="disabled"
+                @click="$emit('prev')"
+                aria-label="Previous track"
+            >◀</button>
             <button
                 type="button"
                 class="play-button"
                 :disabled="disabled"
                 @click="$emit('toggle')"
+                :aria-label="isPlaying ? 'Pause' : 'Play'"
             >
-                {{ isPlaying ? "Pause" : "Play" }}
+                {{ isPlaying ? "⏸" : "▶" }}
             </button>
-            <button type="button" :disabled="disabled" @click="$emit('next')">Next</button>
+            <button
+                type="button"
+                :disabled="disabled"
+                @click="$emit('next')"
+                aria-label="Next track"
+            >▶</button>
         </div>
     `
 };
 
+/* ================================================================
+   TrackList — renders playlist; scoped slot lets parent customise
+   each row
+   ================================================================ */
 const TrackList = {
     props: {
-        tracks: {
-            type: Array,
-            required: true
-        },
-        currentIndex: {
-            type: Number,
-            required: true
-        }
+        tracks: { type: Array, required: true },
+        currentIndex: { type: Number, required: true }
     },
     emits: ["select"],
     methods: {
@@ -50,8 +66,18 @@ const TrackList = {
         }
     },
     template: `
-        <ul class="playlist" v-if="tracks.length">
-            <li v-for="(track, index) in tracks" :key="track.id">
+        <ul
+            class="playlist"
+            v-if="tracks.length"
+            role="listbox"
+            aria-label="Playlist"
+        >
+            <li
+                v-for="(track, index) in tracks"
+                :key="track.id"
+                role="option"
+                :aria-selected="index === currentIndex"
+            >
                 <slot
                     name="track"
                     :track="track"
@@ -72,164 +98,180 @@ const TrackList = {
     `
 };
 
+/* ================================================================
+   MusicPlayer — root component
+   Fully Composition API.  Handles file loading, audio element,
+   playback control, volume persistence, error feedback.
+   ================================================================ */
 const MusicPlayer = {
-    components: {
-        PlayerPanel,
-        PlayerControls,
-        TrackList
-    },
+    components: { PlayerPanel, PlayerControls, TrackList },
+
     setup() {
-        const audioOk = !!(typeof HTMLMediaElement !== 'undefined');
-        const storageOk = !!(typeof localStorage !== 'undefined');
-        
-        let volume = 0.8;
-        if (storageOk) {
-            const saved = localStorage.getItem('musicPlayerVolume');
-            if (saved) {
-                volume = parseFloat(saved);
-            }
-        }
-        
-        console.log('Music Player initialized:', { audioOk, storageOk });
-        
-        return { volume };
-    },
-    data() {
-        return {
-            tracks: [],
-            currentIndex: 0,
-            currentTime: 0,
-            duration: 0,
-            volume: this.volume || 0.8,
-            isPlaying: false
+        // ── reactive state ──────────────────────────────────────
+        const tracks       = ref([]);
+        const currentIndex = ref(0);
+        const currentTime  = ref(0);
+        const duration     = ref(0);
+        const isPlaying    = ref(false);
+        const isSeeking    = ref(false);
+        const errorMessage = ref("");
+
+        const audioRef     = ref(null);   // <audio> template ref
+
+        // Volume — restore from localStorage; use null-check so 0 survives
+        const storageOk = typeof localStorage !== "undefined";
+        const saved     = storageOk ? localStorage.getItem("musicPlayerVolume") : null;
+        const volume    = ref(saved !== null ? parseFloat(saved) : 0.8);
+
+        // ── computed ────────────────────────────────────────────
+        const currentTrack = computed(() => tracks.value[currentIndex.value] || null);
+        const hasTracks    = computed(() => tracks.value.length > 0);
+        const progressMax  = computed(() => duration.value || 100);
+
+        // ── helpers ─────────────────────────────────────────────
+        const formatTime = (seconds) => {
+            if (!Number.isFinite(seconds)) return "0:00";
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+            return `${m}:${s}`;
         };
-    },
-    computed: {
-        currentTrack() {
-            return this.tracks[this.currentIndex] || null;
-        },
-        hasTracks() {
-            return this.tracks.length > 0;
-        },
-        progressMax() {
-            return this.duration || 100;
-        }
-    },
-    methods: {
-        formatTime(seconds) {
-            if (!Number.isFinite(seconds)) {
-                return "0:00";
-            }
 
-            const minutes = Math.floor(seconds / 60);
-            const rest = Math.floor(seconds % 60).toString().padStart(2, "0");
-            return `${minutes}:${rest}`;
-        },
-        chooseFiles(event) {
-            this.tracks.forEach((track) => URL.revokeObjectURL(track.url));
-            this.tracks = Array.from(event.target.files).map((file, index) => ({
-                id: `${file.name}-${file.lastModified}-${index}`,
-                name: file.name,
-                url: URL.createObjectURL(file)
-            }));
+        // ── core playback ───────────────────────────────────────
+        const loadCurrentTrack = (shouldPlay) => {
+            const audio = audioRef.value;
+            if (!audio || !currentTrack.value) return;
 
-            this.currentIndex = 0;
-            this.currentTime = 0;
-            this.duration = 0;
-            this.isPlaying = false;
-
-            this.$nextTick(() => {
-                this.loadCurrentTrack(false);
-            });
-        },
-        loadCurrentTrack(shouldPlay) {
-            const audio = this.$refs.audio;
-
-            if (!audio || !this.currentTrack) {
-                return;
-            }
-
-            audio.src = this.currentTrack.url;
-            audio.volume = this.volume;
+            audio.src    = currentTrack.value.url;
+            audio.volume = volume.value;
             audio.load();
-            this.currentTime = 0;
+            currentTime.value = 0;
+            errorMessage.value = "";
 
             if (shouldPlay) {
-                audio.play().catch(() => {
-                    this.isPlaying = false;
+                audio.play().catch((err) => {
+                    console.warn("Playback failed:", err);
+                    isPlaying.value = false;
+                    errorMessage.value = "Unable to play this track. Try a different file.";
                 });
             }
-        },
-        togglePlay() {
-            const audio = this.$refs.audio;
+        };
 
-            if (!audio || !this.hasTracks) {
-                return;
-            }
+        const chooseFiles = (event) => {
+            // 1) build new array FIRST (prevents orphaned ObjectURLs on error)
+            const files     = Array.from(event.target.files);
+            const newTracks = files.map((file, i) => ({
+                id:   `${file.name}-${file.lastModified}-${i}`,
+                name: file.name,
+                url:  URL.createObjectURL(file)
+            }));
+
+            // 2) release old URLs, then swap
+            tracks.value.forEach((t) => URL.revokeObjectURL(t.url));
+            tracks.value       = newTracks;
+            currentIndex.value = 0;
+            currentTime.value  = 0;
+            duration.value     = 0;
+            isPlaying.value    = false;
+            errorMessage.value = "";
+
+            nextTick(() => loadCurrentTrack(false));
+        };
+
+        const togglePlay = () => {
+            const audio = audioRef.value;
+            if (!audio || !hasTracks.value) return;
 
             if (audio.paused) {
-                audio.play().catch(() => {
-                    this.isPlaying = false;
+                audio.play().catch((err) => {
+                    console.warn("Playback failed:", err);
+                    isPlaying.value = false;
+                    errorMessage.value = "Unable to play. Try a different file.";
                 });
             } else {
                 audio.pause();
             }
-        },
-        playPrev() {
-            if (!this.hasTracks) {
-                return;
-            }
+        };
 
-            this.currentIndex = (this.currentIndex - 1 + this.tracks.length) % this.tracks.length;
-            this.loadCurrentTrack(true);
-        },
-        playNext() {
-            if (!this.hasTracks) {
-                return;
-            }
+        const playPrev = () => {
+            if (!hasTracks.value) return;
+            currentIndex.value =
+                (currentIndex.value - 1 + tracks.value.length) % tracks.value.length;
+            loadCurrentTrack(true);
+        };
 
-            this.currentIndex = (this.currentIndex + 1) % this.tracks.length;
-            this.loadCurrentTrack(true);
-        },
-        selectTrack(index) {
-            this.currentIndex = index;
-            this.loadCurrentTrack(true);
-        },
-        seek() {
-            const audio = this.$refs.audio;
+        const playNext = () => {
+            if (!hasTracks.value) return;
+            currentIndex.value = (currentIndex.value + 1) % tracks.value.length;
+            loadCurrentTrack(true);
+        };
 
-            if (audio && this.hasTracks) {
-                audio.currentTime = this.currentTime;
-            }
-        },
-        setVolume() {
-            const audio = this.$refs.audio;
+        const selectTrack = (index) => {
+            currentIndex.value = index;
+            loadCurrentTrack(true);
+        };
 
-            if (audio) {
-                audio.volume = this.volume;
+        // ── seeking ─────────────────────────────────────────────
+        // isSeeking gate prevents syncTime from fighting the drag.
+        // Actual seek fires on @change (mouse/touch release).
+        const onSeekStart = () => {
+            isSeeking.value = true;
+        };
+
+        const onSeekEnd = (event) => {
+            isSeeking.value = false;
+            const audio = audioRef.value;
+            if (audio && hasTracks.value) {
+                audio.currentTime = Number(event.target.value);
             }
-            
-            // 保存音量设置到本地存储
-            if (typeof localStorage !== 'undefined') {
-                localStorage.setItem('musicPlayerVolume', this.volume);
-            }
-        },
-        updateDuration() {
-            const audio = this.$refs.audio;
-            this.duration = audio ? Math.floor(audio.duration) : 0;
-        },
-        syncTime() {
-            const audio = this.$refs.audio;
-            this.currentTime = audio ? Math.floor(audio.currentTime) : 0;
-        }
+        };
+
+        // ── audio event callbacks ───────────────────────────────
+        const updateDuration = () => {
+            const audio = audioRef.value;
+            duration.value = audio ? Math.floor(audio.duration) : 0;
+        };
+
+        const syncTime = () => {
+            if (isSeeking.value) return;          // don't fight user drag
+            const audio = audioRef.value;
+            currentTime.value = audio ? Math.floor(audio.currentTime) : 0;
+        };
+
+        // ── watchers ────────────────────────────────────────────
+        // Watch volume so we always write through to <audio> and
+        // localStorage AFTER the ref has been updated (no more
+        // v-model/@input ordering headache).
+        watch(volume, (val) => {
+            const audio = audioRef.value;
+            if (audio) audio.volume = val;
+            if (storageOk) localStorage.setItem("musicPlayerVolume", val);
+        });
+
+        // ── lifecycle ───────────────────────────────────────────
+        onMounted(() => {
+            const audio = audioRef.value;
+            if (audio) audio.volume = volume.value;
+        });
+
+        onBeforeUnmount(() => {
+            tracks.value.forEach((t) => URL.revokeObjectURL(t.url));
+        });
+
+        // ── template bindings ───────────────────────────────────
+        return {
+            tracks, currentIndex, currentTime, duration,
+            volume, isPlaying, isSeeking, errorMessage,
+            currentTrack, hasTracks, progressMax,
+            formatTime, chooseFiles, loadCurrentTrack,
+            togglePlay, playPrev, playNext, selectTrack,
+            onSeekStart, onSeekEnd, updateDuration, syncTime,
+            audioRef
+        };
     },
-    mounted() {
-        this.setVolume();
-    },
-    beforeUnmount() {
-        this.tracks.forEach((track) => URL.revokeObjectURL(track.url));
-    },
-    /* 字符串模板，Vue在渲染组件时会把它当作模板解析并生成 DOM */
+
+    /* ------------------------------------------------------------
+       Template
+       ------------------------------------------------------------ */
     template: `
         <player-panel>
             <template #heading>
@@ -243,7 +285,14 @@ const MusicPlayer = {
                 <slot v-else name="empty">Choose audio files</slot>
             </p>
 
-            <input type="file" accept="audio/*" multiple @change="chooseFiles">
+            <p v-if="errorMessage" class="error-message" role="alert">{{ errorMessage }}</p>
+
+            <input
+                type="file"
+                accept="audio/*"
+                multiple
+                @change="chooseFiles"
+            >
 
             <player-controls
                 :disabled="!hasTracks"
@@ -251,7 +300,7 @@ const MusicPlayer = {
                 @prev="playPrev"
                 @toggle="togglePlay"
                 @next="playNext"
-            ></player-controls>
+            />
 
             <input
                 type="range"
@@ -259,7 +308,9 @@ const MusicPlayer = {
                 :max="progressMax"
                 v-model.number="currentTime"
                 :disabled="!hasTracks"
-                @input="seek"
+                @mousedown="onSeekStart"
+                @touchstart="onSeekStart"
+                @change="onSeekEnd"
             >
 
             <div class="time-row">
@@ -268,14 +319,13 @@ const MusicPlayer = {
             </div>
 
             <label class="volume-row">
-                Volume
+                <span>Volume</span>
                 <input
                     type="range"
                     min="0"
                     max="1"
                     step="0.01"
                     v-model.number="volume"
-                    @input="setVolume"
                 >
             </label>
 
@@ -300,19 +350,20 @@ const MusicPlayer = {
             </template>
 
             <audio
-                ref="audio"
+                ref="audioRef"
                 @loadedmetadata="updateDuration"
                 @timeupdate="syncTime"
                 @play="isPlaying = true"
                 @pause="isPlaying = false"
                 @ended="playNext"
-            ></audio>
+            />
         </player-panel>
     `
 };
-//挂载APP
+
+/* ================================================================
+   Bootstrap
+   ================================================================ */
 createApp({
-    components: {
-        MusicPlayer
-    }
+    components: { MusicPlayer }
 }).mount("#app");

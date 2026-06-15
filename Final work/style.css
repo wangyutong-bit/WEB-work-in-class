@@ -7,111 +7,232 @@ body {
     min-height: 100vh;
     display: grid;
     place-items: center;
-    background: #f3f4f6;
-    color: #111827;
-    font-family: Arial, Helvetica, sans-serif;
+    background: #fafafa;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
+/* ── card ────────────────────────────────────────────── */
 .player {
-    width: min(420px, calc(100vw - 32px));
-    padding: 20px;
-    background: #ffffff;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    width: min(380px, calc(100vw - 48px));
+    padding: 32px 28px 24px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
 }
 
+/* ── heading ─────────────────────────────────────────── */
 h1 {
-    margin: 0 0 16px;
-    font-size: 24px;
+    margin: 0 0 24px;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: #222;
 }
 
+/* ── now-playing ─────────────────────────────────────── */
 .track-name {
-    min-height: 24px;
-    margin: 0 0 12px;
-    color: #374151;
-    font-weight: 700;
+    min-height: 20px;
+    margin: 0 0 20px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #888;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.controls,
-.time-row,
+.track-name span {
+    color: #333;
+}
+
+/* ── controls row ────────────────────────────────────── */
+.controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 20px 0;
+}
+
+/* ── button base ─────────────────────────────────────── */
+button {
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    font-size: 13px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+button:hover:not(:disabled) {
+    border-color: #aaa;
+    color: #222;
+}
+
+button:disabled {
+    cursor: default;
+    opacity: 0.25;
+}
+
+button:focus-visible {
+    outline: 2px solid #999;
+    outline-offset: 2px;
+}
+
+/* ── play button ─────────────────────────────────────── */
+.play-button {
+    width: 52px;
+    height: 52px;
+    font-size: 14px;
+    font-weight: 500;
+    border-color: #ccc;
+    color: #333;
+}
+
+/* ── range inputs ────────────────────────────────────── */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #999;
+    border: none;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #999;
+    border: none;
+    cursor: pointer;
+}
+
+input[type="range"]:disabled {
+    opacity: 0.25;
+    cursor: default;
+}
+
+/* ── time row ────────────────────────────────────────── */
+.time-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 11px;
+    color: #bbb;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── volume row ──────────────────────────────────────── */
 .volume-row {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-top: 24px;
+    font-size: 12px;
+    color: #999;
 }
 
-.controls {
-    margin: 16px 0;
-}
-
-button,
-input[type="file"]::file-selector-button {
-    border: 0;
-    border-radius: 6px;
-    background: #2563eb;
-    color: #ffffff;
-    cursor: pointer;
-    font-size: 15px;
-    padding: 10px 12px;
-}
-
-button:disabled {
-    cursor: not-allowed;
-    opacity: 0.45;
-}
-
-.play-button {
-    flex: 1;
-    font-weight: 700;
-}
-
-input[type="range"] {
+/* ── file input ──────────────────────────────────────── */
+input[type="file"] {
+    display: block;
     width: 100%;
-}
-
-.time-row {
-    justify-content: space-between;
-    margin-top: 6px;
-    color: #6b7280;
+    margin-bottom: 4px;
     font-size: 13px;
+    color: #888;
 }
 
-.volume-row {
-    margin-top: 14px;
-    color: #374151;
+input[type="file"]::file-selector-button {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 6px 14px;
+    margin-right: 12px;
+    transition: border-color 0.15s;
 }
 
+input[type="file"]::file-selector-button:hover {
+    border-color: #aaa;
+}
+
+/* ── playlist ────────────────────────────────────────── */
 .playlist {
-    margin: 16px 0 0;
+    margin: 20px 0 0;
     padding: 0;
     list-style: none;
-    max-height: 150px;
+    max-height: 140px;
     overflow: auto;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #f0f0f0;
+}
+
+.playlist li {
+    margin: 0;
 }
 
 .playlist button {
     width: 100%;
-    padding: 10px 4px;
+    height: auto;
+    padding: 10px 0;
+    border: none;
+    border-bottom: 1px solid #f5f5f5;
     border-radius: 0;
-    border-bottom: 1px solid #e5e7eb;
     background: transparent;
-    color: #111827;
+    color: #999;
+    font-size: 13px;
     text-align: left;
+    font-weight: 400;
+    transition: color 0.1s;
+}
+
+.playlist button:hover {
+    color: #555;
 }
 
 .playlist button.active {
-    color: #2563eb;
-    font-weight: 700;
+    color: #333;
+    font-weight: 500;
 }
 
+/* ── error banner ────────────────────────────────────── */
+.error-message {
+    margin: 0 0 16px;
+    padding: 8px 12px;
+    background: #fefafa;
+    border: 1px solid #f3dfdf;
+    border-radius: 6px;
+    color: #c44;
+    font-size: 13px;
+}
+
+/* ── footer note ─────────────────────────────────────── */
 .player-note {
-    margin: 14px 0 0;
-    color: #9ca3af;
-    font-size: 12px;
+    margin: 20px 0 0;
+    color: #ccc;
+    font-size: 11px;
     text-align: center;
 }
