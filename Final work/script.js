@@ -1,8 +1,6 @@
 const { createApp, ref, computed, watch, onMounted, onBeforeUnmount, nextTick } = Vue;
 
-/* ================================================================
-   PlayerPanel — layout shell with named slots
-   ================================================================ */
+
 const PlayerPanel = {
     template: `
         <main class="player" role="region" aria-label="Music Player">
@@ -13,10 +11,7 @@ const PlayerPanel = {
     `
 };
 
-/* ================================================================
-   PlayerControls — prev / play-pause / next
-   Pure presentational: emits events, owns no playback logic
-   ================================================================ */
+
 const PlayerControls = {
     props: {
         disabled: Boolean,
@@ -50,10 +45,7 @@ const PlayerControls = {
     `
 };
 
-/* ================================================================
-   TrackList — renders playlist; scoped slot lets parent customise
-   each row
-   ================================================================ */
+
 const TrackList = {
     props: {
         tracks: { type: Array, required: true },
@@ -98,16 +90,11 @@ const TrackList = {
     `
 };
 
-/* ================================================================
-   MusicPlayer — root component
-   Fully Composition API.  Handles file loading, audio element,
-   playback control, volume persistence, error feedback.
-   ================================================================ */
+
 const MusicPlayer = {
     components: { PlayerPanel, PlayerControls, TrackList },
 
     setup() {
-        // ── reactive state ──────────────────────────────────────
         const tracks       = ref([]);
         const currentIndex = ref(0);
         const currentTime  = ref(0);
@@ -118,17 +105,14 @@ const MusicPlayer = {
 
         const audioRef     = ref(null);   // <audio> template ref
 
-        // Volume — restore from localStorage; use null-check so 0 survives
         const storageOk = typeof localStorage !== "undefined";
         const saved     = storageOk ? localStorage.getItem("musicPlayerVolume") : null;
         const volume    = ref(saved !== null ? parseFloat(saved) : 0.8);
 
-        // ── computed ────────────────────────────────────────────
         const currentTrack = computed(() => tracks.value[currentIndex.value] || null);
         const hasTracks    = computed(() => tracks.value.length > 0);
         const progressMax  = computed(() => duration.value || 100);
 
-        // ── helpers ─────────────────────────────────────────────
         const formatTime = (seconds) => {
             if (!Number.isFinite(seconds)) return "0:00";
             const m = Math.floor(seconds / 60);
@@ -136,7 +120,6 @@ const MusicPlayer = {
             return `${m}:${s}`;
         };
 
-        // ── core playback ───────────────────────────────────────
         const loadCurrentTrack = (shouldPlay) => {
             const audio = audioRef.value;
             if (!audio || !currentTrack.value) return;
@@ -210,9 +193,7 @@ const MusicPlayer = {
             loadCurrentTrack(true);
         };
 
-        // ── seeking ─────────────────────────────────────────────
-        // isSeeking gate prevents syncTime from fighting the drag.
-        // Actual seek fires on @change (mouse/touch release).
+
         const onSeekStart = () => {
             isSeeking.value = true;
         };
@@ -225,7 +206,6 @@ const MusicPlayer = {
             }
         };
 
-        // ── audio event callbacks ───────────────────────────────
         const updateDuration = () => {
             const audio = audioRef.value;
             duration.value = audio ? Math.floor(audio.duration) : 0;
@@ -237,17 +217,12 @@ const MusicPlayer = {
             currentTime.value = audio ? Math.floor(audio.currentTime) : 0;
         };
 
-        // ── watchers ────────────────────────────────────────────
-        // Watch volume so we always write through to <audio> and
-        // localStorage AFTER the ref has been updated (no more
-        // v-model/@input ordering headache).
         watch(volume, (val) => {
             const audio = audioRef.value;
             if (audio) audio.volume = val;
             if (storageOk) localStorage.setItem("musicPlayerVolume", val);
         });
 
-        // ── lifecycle ───────────────────────────────────────────
         onMounted(() => {
             const audio = audioRef.value;
             if (audio) audio.volume = volume.value;
@@ -257,7 +232,6 @@ const MusicPlayer = {
             tracks.value.forEach((t) => URL.revokeObjectURL(t.url));
         });
 
-        // ── template bindings ───────────────────────────────────
         return {
             tracks, currentIndex, currentTime, duration,
             volume, isPlaying, isSeeking, errorMessage,
@@ -269,9 +243,6 @@ const MusicPlayer = {
         };
     },
 
-    /* ------------------------------------------------------------
-       Template
-       ------------------------------------------------------------ */
     template: `
         <player-panel>
             <template #heading>
@@ -361,9 +332,7 @@ const MusicPlayer = {
     `
 };
 
-/* ================================================================
-   Bootstrap
-   ================================================================ */
+
 createApp({
     components: { MusicPlayer }
 }).mount("#app");

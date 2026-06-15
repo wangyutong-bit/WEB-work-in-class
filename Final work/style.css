@@ -13,7 +13,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* ── card ────────────────────────────────────────────── */
+
 .player {
     width: min(380px, calc(100vw - 48px));
     padding: 32px 28px 24px;
@@ -22,7 +22,7 @@ body {
     border-radius: 12px;
 }
 
-/* ── heading ─────────────────────────────────────────── */
+
 h1 {
     margin: 0 0 24px;
     font-size: 18px;
@@ -31,7 +31,7 @@ h1 {
     color: #222;
 }
 
-/* ── now-playing ─────────────────────────────────────── */
+
 .track-name {
     min-height: 20px;
     margin: 0 0 20px;
@@ -47,7 +47,7 @@ h1 {
     color: #333;
 }
 
-/* ── controls row ────────────────────────────────────── */
+
 .controls {
     display: flex;
     align-items: center;
@@ -56,7 +56,7 @@ h1 {
     margin: 20px 0;
 }
 
-/* ── button base ─────────────────────────────────────── */
+
 button {
     border: 1px solid #ddd;
     border-radius: 50%;
@@ -88,7 +88,7 @@ button:focus-visible {
     outline-offset: 2px;
 }
 
-/* ── play button ─────────────────────────────────────── */
+
 .play-button {
     width: 52px;
     height: 52px;
@@ -98,7 +98,7 @@ button:focus-visible {
     color: #333;
 }
 
-/* ── range inputs ────────────────────────────────────── */
+
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
@@ -135,7 +135,7 @@ input[type="range"]:disabled {
     cursor: default;
 }
 
-/* ── time row ────────────────────────────────────────── */
+
 .time-row {
     display: flex;
     justify-content: space-between;
@@ -145,7 +145,7 @@ input[type="range"]:disabled {
     font-variant-numeric: tabular-nums;
 }
 
-/* ── volume row ──────────────────────────────────────── */
+
 .volume-row {
     display: flex;
     align-items: center;
@@ -155,7 +155,7 @@ input[type="range"]:disabled {
     color: #999;
 }
 
-/* ── file input ──────────────────────────────────────── */
+
 input[type="file"] {
     display: block;
     width: 100%;
@@ -180,7 +180,7 @@ input[type="file"]::file-selector-button:hover {
     border-color: #aaa;
 }
 
-/* ── playlist ────────────────────────────────────────── */
+
 .playlist {
     margin: 20px 0 0;
     padding: 0;
@@ -218,7 +218,7 @@ input[type="file"]::file-selector-button:hover {
     font-weight: 500;
 }
 
-/* ── error banner ────────────────────────────────────── */
+
 .error-message {
     margin: 0 0 16px;
     padding: 8px 12px;
@@ -229,7 +229,7 @@ input[type="file"]::file-selector-button:hover {
     font-size: 13px;
 }
 
-/* ── footer note ─────────────────────────────────────── */
+
 .player-note {
     margin: 20px 0 0;
     color: #ccc;
