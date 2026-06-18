@@ -1,6 +1,6 @@
 # Music Player
 
-基于 **Vue 3 + Vite + Vue Router** 的本地音乐播放器，支持用户注册登录（localStorage）、歌曲收藏、全屏播放。
+基于 **Vue 3 + Vite + Vue Router** 的本地音乐播放器，支持用户注册登录、歌曲收藏、跨页面播放，以及音频文件的 IndexedDB 持久化存储。
 
 ## 快速开始
 
@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-浏览器打开 `http://localhost:5173`。
+浏览器打开 `http://localhost:5173` 。
 
 ---
 
@@ -21,167 +21,131 @@ Final work/
 ├── package.json
 ├── vite.config.js
 └── src/
-    ├── main.js                    挂载 Vue 实例，注册 router
-    ├── App.vue                    根组件，keep-alive + 动态 key
-    ├── router/index.js            路由定义 + 导航守卫
-    ├── assets/style.css           全局样式
+    ├── main.js                     挂载 Vue 实例，注册 router
+    ├── App.vue                     根组件，keep-alive + 动态 key 多用户隔离
+    ├── router/index.js             路由定义 + 导航守卫
+    ├── assets/style.css            全局样式
     ├── composables/
-    │   ├── useAuth.js             登录/注册/会话 逻辑
-    │   └── useFavorites.js        收藏 逻辑
+    │   ├── useAuth.js              登录/注册/会话管理
+    │   ├── useFavorites.js         收藏逻辑
+    │   └── useTrackStorage.js      IndexedDB 音频文件持久化
     ├── views/
-    │   ├── LoginView.vue          登录/注册页面
-    │   ├── PlayerView.vue         播放器页面（包装 MusicPlayer）
-    │   └── FavoritesView.vue      收藏列表页面
+    │   ├── LoginView.vue           登录/注册页面
+    │   ├── PlayerView.vue          播放器页面（包装 MusicPlayer）
+    │   └── FavoritesView.vue       收藏列表页面
     └── components/
-        ├── MusicPlayer.vue        核心播放器
-        ├── PlayerPanel.vue        全屏布局外壳
-        ├── PlayerControls.vue     播放控制按钮
-        └── TrackList.vue          播放列表（作用域插槽）
+        ├── MusicPlayer.vue         核心播放器
+        ├── PlayerPanel.vue         全屏布局外壳
+        ├── PlayerControls.vue      播放控制按钮（上/下/播放暂停）
+        └── TrackList.vue           播放列表（作用域插槽）
 ```
 
 ---
 
-## localStorage 数据模型
+## 存储架构
 
-| Key | 类型 | 示例 | 说明 |
-|---|---|---|---|
-| `musicApp_users` | `Array` | `[{id, username, password, favorites}]` | 所有注册用户 |
-| `musicApp_session` | `Object` | `{ username: "ninler" }` | 当前登录用户会话 |
-| `musicPlayerVolume` | `number` | `0.8` | 播放音量（全局，非按用户） |
+### localStorage（持久化用户数据）
 
-### `musicApp_users` 数组元素
+| Key | 类型 | 说明 |
+|---|---|---|
+| `musicApp_users` | `Array<User>` | 所有注册用户及其收藏 |
+| `musicApp_session` | `{ username }` | 当前登录会话 |
+| `musicPlayerVolume` | `number` (0-1) | 播放音量，默认 0.8 |
+
+#### User 数据模型
 
 ```ts
 type User = {
-  id:        string          // "m9k2x..." 随机生成
-  username:  string          // "ninler"
-  password:  string          // 明文密码（仅练习项目）
-  favorites: FavTrack[]      // 收藏的歌曲列表
+  id:        string          // 随机 ID（Date.now().toString(36) + Math.random()）
+  username:  string
+  password:  string          // 明文（练习项目）
+  favorites: FavTrack[]
 }
 
 type FavTrack = {
-  id:   string               // 歌曲唯一标识，由 chooseFiles() 生成
-  name: string               // 歌曲名（已去后缀）
+  id:   string               // 歌曲唯一 ID，由 chooseFiles() 生成
+  name: string               // 歌曲名（已去除扩展名）
 }
 ```
 
-### 歌曲 ID 生成规则
+#### 歌曲 ID 生成规则
 
 ```js
 // src/components/MusicPlayer.vue — chooseFiles()
-id: `${file.name}-${file.lastModified}-${index}`
-// 例: "song.mp3-1680000000000-2"
+// 格式: "文件名.扩展名-lastModified-数组下标"
+id: `${file.name}-${file.lastModified}-${i}`
+// 例: "交换余生.flac-1718000000000-0"
 ```
 
-同一文件在不同时间选择会生成不同 ID，因此收藏是在当前播放会话内有效的歌曲快照。
+### IndexedDB（持久化音频文件）
+
+| 数据库 | 对象仓库 | Key | 字段 |
+|---|---|---|---|
+| `musicPlayerDB` v1 | `audioFiles` | `id` (歌曲 ID) | `id`, `name`, `data` (ArrayBuffer), `mime` |
+
+- **写入**: 选择文件时，`saveTracksToDB()` 清除旧数据并写入新文件
+- **读取**: 页面加载时，`loadTracksFromDB()` 恢复 ArrayBuffer → `new Blob([data])` → `URL.createObjectURL()` → blob URL
+- **生命周期**: blob URL 在组件卸载时释放 (`onBeforeUnmount`)
+
+**为什么需要 IndexedDB**：浏览器刷新后 blob URL 全部失效（`createObjectURL` 只在当前页面生命周期有效）。IndexedDB 将音频文件的二进制数据持久化到磁盘，刷新后自动恢复播放列表，**无需每次重新添加文件**。
 
 ---
 
-## 登录注册 — 变量传递链
+## 登录注册
 
-### 1. LoginView.vue → useAuth composable
+### LoginView → useAuth
 
 ```
-┌─────────────────┐     调用      ┌──────────────────┐
-│  LoginView.vue  │ ────────────→ │  useAuth.js      │
-│                 │               │                  │
-│  login(u, p)    │               │  setSession()    │
-│  register(u, p) │               │  ↓               │
-│  error / success│ ←──────────── │  localStorage     │
-└─────────────────┘   返回 ref    │  musicApp_session │
-                                 └──────────────────┘
+LoginView.vue                    useAuth.js
+───────────────────────────────────────────────
+login(username, password)  →  getUsers()
+                              find 校验
+                              setSession() → localStorage["musicApp_session"]
+                              return true/false
+
+register(username, password) → getUsers()
+                               检查重复
+                               users.push({...favorites:[]})
+                               saveUsers()
+                               return true/false
 ```
 
-**LoginView.vue** 中 `useAuth()` 解构出 4 个响应式变量和方法：
-
-```js
-const { error, success, login, register } = useAuth()
-```
+**LoginView** 从 `useAuth()` 解构 4 项：
 
 | 变量 | 类型 | 说明 |
 |---|---|---|
-| `error` | `ref<string>` | 错误提示，空串表示无错误 |
-| `success` | `ref<string>` | 成功提示（仅注册时使用） |
-| `login(username, password)` | 函数 → `boolean` | 校验用户表，写入 session，返回是否成功 |
-| `register(username, password)` | 函数 → `boolean` | 创建新用户，写入 users 表，返回是否成功 |
+| `error` | `ref<string>` | 错误消息 |
+| `success` | `ref<string>` | 成功消息（仅注册） |
+| `login(u,p)` | `→ boolean` | 校验并写入 session |
+| `register(u,p)` | `→ boolean` | 创建用户并写入 users 表 |
 
-**login() 执行流程：**
-
-```
-login("ninler", "1234")
-  │
-  ├─ error.value = ''                          // 清空旧错误
-  ├─ users = JSON.parse(localStorage["musicApp_users"])
-  ├─ user = users.find(u => u.username === "ninler" && u.password === "1234")
-  │
-  ├─ 找不到 → error.value = '用户名或密码错误。' → return false
-  │
-  └─ 找到了 → setSession("ninler")
-                │
-                └─ localStorage["musicApp_session"] = '{"username":"ninler"}'
-                return true
-```
-
-**register() 执行流程：**
-
-```
-register("newuser", "pass")
-  │
-  ├─ error.value = ''; success.value = ''
-  ├─ users = JSON.parse(localStorage["musicApp_users"])
-  ├─ 用户名已存在 → error.value = '用户名已存在。' → return false
-  │
-  └─ 可用 → users.push({ id:随机, username:"newuser", password:"pass", favorites:[] })
-           saveUsers(users)
-           success.value = '注册成功，请登录。'
-           return true
-```
-
-**LoginView.vue 的 submit() 使用返回值：**
+### 路由守卫
 
 ```js
-if (isRegister.value) {
-  const ok = register(u, p)          // ok = true/false
-  if (ok) {
-    isRegister.value = false          // 切换到登录表单
-    password.value = ''
-    confirmPwd.value = ''
-  }
-  // 失败时 error.value 已被 useAuth 设置，模板自动渲染
-} else {
-  if (login(u, p)) {                  // 登录成功
-    router.push({ name: 'player' })   // 跳转播放器
-  }
-  // 失败时 error.value 已被 useAuth 设置
+// router/index.js — beforeEach
+beforeEach(to, from, next) {
+  // 访问需要登录的页面但无 session → 重定向到 /
+  if (to.meta.requiresAuth && !getSession()) → next({ name: 'login' })
+
+  // 已登录却访问 / → 重定向到播放器
+  if (to.name === 'login' && getSession())    → next({ name: 'player' })
+
+  // 其他情况放行
+  else → next()
 }
 ```
 
----
+路由表：
 
-### 2. 路由守卫 — session 校验
+| 路径 | 名称 | 组件 | 需登录 |
+|---|---|---|---|
+| `/` | `login` | LoginView | 否 |
+| `/player` | `player` | PlayerView | 是 |
+| `/favorites` | `favorites` | FavoritesView | 是 |
 
-`src/router/index.js` 的 `beforeEach` 守卫控制页面访问：
+### App.vue — keep-alive 与多用户隔离
 
-```
-用户访问任意路径
-  │
-  ├─ 目标页 requiresAuth 且无 session
-  │     → next({ name: 'login' })     // 重定向到登录
-  │
-  ├─ 目标页是 /login 且已有 session
-  │     → next({ name: 'player' })    // 已登录，直接进播放器
-  │
-  └─ 其他情况
-        → next()                      // 放行
-```
-
-`getSession()` 每次从 localStorage 实时读取，不是缓存值。
-
----
-
-### 3. App.vue — keep-alive 与多用户隔离
-
-```
+```html
 <router-view v-slot="{ Component }">
   <keep-alive include="PlayerView">
     <component :is="Component" :key="sessionKey" />
@@ -189,180 +153,277 @@ if (isRegister.value) {
 </router-view>
 ```
 
-**sessionKey** 是一个 computed：
+`sessionKey` = 当前用户名（未登录时 `"unset"`）。
+
+| 场景 | sessionKey 变化 | 效果 |
+|---|---|---|
+| 用户 A 登录 | `"UserA"` | 新建 PlayerView 实例 |
+| 去收藏页再返回 | 不变 | keep-alive 复用缓存，播放状态不丢失 |
+| 用户 A 退出，用户 B 登录 | `"UserA"` → `"UserB"` | 销毁旧实例 + 旧 blob URL，创建新实例 |
+
+`:key` 变化时 Vue 销毁旧的 PlayerView，创建全新实例——防止用户间数据泄露。
+
+---
+
+## 音乐播放
+
+### 音频文件加载
+
+```
+选择文件（input[type=file] multiple accept=audio/*）
+  │
+  ├─ chooseFiles(event)
+  │     ├─ File → { id, name(去扩展名), url: blobURL }
+  │     ├─ saveTracksToDB() → IndexedDB        // 持久化二进制数据
+  │     ├─ revoke old blob URLs
+  │     ├─ tracks.value = newTracks
+  │     ├─ cleanOrphanedFavorites()            // 清理失效收藏
+  │     └─ loadCurrentTrack(false)             // 加载但不自动播放
+
+页面刷新 / 重新打开
+  │
+  ├─ onMounted()
+  │     ├─ loadTracksFromDB() → IndexedDB      // 恢复 ArrayBuffer
+  │     ├─ new Blob([data]) → createObjectURL  // 重建 blob URL
+  │     ├─ tracks.value = restored
+  │     └─ playTrackFromQuery()                // 若有 ?track= 则播放
+```
+
+### 播放控制
+
+```
+<audio ref="audioRef"
+  @loadedmetadata → updateDuration()     // 音频元数据就绪后更新总时长
+  @时间update       → syncTime()          // 同步 currentTime（拖动时不更新）
+  @play/@pause     → isPlaying = true/false
+  @ended           → playNext()           // 自动切下一首
+/>
+
+togglePlay()  →  audio.paused ? audio.play() : audio.pause()
+playPrev()    →  currentIndex = (i - 1 + N) % N  →  loadCurrentTrack(true)
+playNext()    →  currentIndex = (i + 1) % N      →  loadCurrentTrack(true)
+selectTrack() →  currentIndex = idx              →  loadCurrentTrack(true)
+```
+
+`loadCurrentTrack(shouldPlay)` 设置 `audio.src = currentTrack.url`（blob URL）并调用 `audio.play()`。
+
+### 音量
+
+- 默认值 0.8，双向绑定滑块
+- `watch(volume)` 同步到 `audio.volume`
+- 每次变化写入 `localStorage["musicPlayerVolume"]`
+
+---
+
+## 收藏功能
+
+### 数据结构
+
+```ts
+// useFavorites 内部
+favMap: ref<Map<string, string>>    // key = trackId, value = trackName(去扩展名)
+
+// localStorage 中的存储格式
+user.favorites: [{ id: "song.flac-...", name: "交换余生" }, ...]
+```
+
+### 流程
+
+```
+点击 ♡ → toggleFavorite(track)
+  │
+  ├─ next = new Map(favMap.value)
+  ├─ 存在 → next.delete(track.id)          // 取消收藏
+  ├─ 不存在 → next.set(track.id, trackName) // 添加收藏
+  ├─ favMap.value = next                    // 触发响应式更新
+  └─ saveFavMap()
+        └─ users[idx].favorites = [...favMap].map(([id,name]) => ({id,name}))
+           saveUsers() → localStorage["musicApp_users"]
+```
+
+所有读写点统一调用 `stripExt()` 去除文件名扩展名，确保收藏列表中名称干净无后缀。
+
+### cleanOrphanedFavorites
+
+当用户更换播放列表（选择新文件）时，自动清理引用已不存在歌曲的收藏项：
 
 ```js
-const sessionKey = computed(() => {
-  const s = getSession()
-  return s ? s.username : 'unset'
-})
+// chooseFiles() 末尾调用
+const validIds = new Set(tracks.value.map(t => t.id))
+// 移除 favMap 中所有 id 不在 validIds 中的条目
 ```
 
-| 场景 | sessionKey 值 | 效果 |
+---
+
+## 跨页面播放：收藏页 → 播放器
+
+这是全文最关键的流程，涉及三个文件的协作。
+
+### 收藏页点击
+
+```js
+// FavoritesView.vue
+// clickSeq 是模块级变量（不在 setup 内），跨组件挂载持久化
+let clickSeq = 0
+
+const playTrack = (f) => {
+  router.push({
+    name: 'player',
+    query: { track: f.id, _seq: String(++clickSeq) }
+  })
+}
+// URL 变为: /player?track=song.flac-1718000000000-0&_seq=1
+```
+
+**为什么需要 `_seq`**：Vue Router 的 `watch` 侦听 query 时，同一首歌点击两次 query 值相同，watch 不会触发。`_seq` 确保每次点击 URL 都不同，watch 必然触发。
+
+### 播放器接收
+
+```js
+// MusicPlayer.vue
+let handledSeq = null    // 已处理的 _seq，防止重复
+
+const playTrackFromQuery = () => {
+  const trackId = route.query.track
+  if (!trackId) return                          // 无收藏请求
+
+  const seq = route.query._seq || ''
+  if (seq === handledSeq) return                // 已处理过，跳过
+  handledSeq = seq
+
+  if (!tracks.value.length) {                   // 无歌曲
+    if (tracksLoaded.value) showError()
+    return
+  }
+
+  const idx = tracks.value.findIndex(t => t.id === trackId)
+  if (idx === -1) { showError(); return }       // 歌曲不在列表中
+
+  selectTrack(idx)                              // 切歌并播放
+}
+```
+
+### 触发时机（三条路径全覆盖）
+
+| 场景 | 触发方式 | 说明 |
 |---|---|---|
-| 未登录 | `"unset"` | 默认 |
-| User A 登录 | `"UserA"` | 创建 PlayerView 实例 |
-| User A 浏览收藏再返回 | `"UserA"`（不变） | keep-alive 复用缓存，状态不丢失 |
-| User A 退出，User B 登录 | `"UserB"`（变了） | Vue 销毁旧实例，创建新实例，UserB 看到自己的数据 |
+| 初始挂载 + 有 query | `onMounted → nextTick(playTrackFromQuery)` | IndexedDB 恢复后播放 |
+| keep-alive 恢复 | `onActivated → nextTick(playTrackFromQuery)` | 从收藏页返回 |
+| 组件已活跃 + query 变化 | `watch(route.query._seq) → nextTick(...)` | 在播放器中点击另一首收藏 |
 
-**关键**：`:key` 变化时 Vue 会销毁旧的缓存的 PlayerView 并创建全新实例。这防止了用户 A 的 session、播放列表、收藏状态泄漏到用户 B。
+**三重触发+handledSeq 去重的设计**：
+- `onActivated` 和 `watch` 可能同时触发 → `handledSeq` 让第二次调用静默跳过
+- `onMounted` 和 `watch` 可能同时触发 → 同上
+- 每次触发都调 `playTrackFromQuery()`，但只有 `_seq` 不同时才执行播放
 
----
-
-### 4. MusicPlayer.vue — 播放器如何读取当前用户
-
-```
-MusicPlayer.vue setup()
-  │
-  ├─ getSession()  → { username: "ninler" }
-  │
-  ├─ username = "ninler"                          // 显示在顶栏
-  │
-  ├─ useFavorites(tracks)                         // 传入 tracks ref
-  │     │
-  │     ├─ getSession() → username = "ninler"
-  │     ├─ getUsers().find(u => u.username === "ninler")
-  │     │     → user.favorites = [{id, name}, ...]
-  │     ├─ favMap = new Map([["id1","song1"], ["id2","song2"]])
-  │     │
-  │     └─ 返回 { toggleFavorite, isFavorited, ... }
-  │
-  ├─ goFavorites() → router.push({ name:'favorites' })
-  ├─ logout()      → clearSession(); router.push({ name:'login' })
-  │
-  └─ watch(route.query.track)                     // 从收藏页跳回时播放
-        │
-        └─ 找到对应 track → selectTrack(index)
-```
-
-**toggleFavorite 执行流程：**
+### 完整数据流
 
 ```
-用户点击歌曲旁的 ♡ 按钮
+收藏页点击 "交换余生"
   │
-  ├─ toggleFavorite(track)    // track = { id:"xxx", name:"林俊杰 - 交换余生" }
-  │     │
-  │     ├─ next = new Map(favMap.value)           // 复制当前 Map
-  │     ├─ 原来没有 → next.set(track.id, track.name)
-  │     ├─ 原来有   → next.delete(track.id)
-  │     ├─ favMap.value = next                    // Vue 检测变化，更新 UI
-  │     │
-  │     └─ saveFavMap()
-  │           │
-  │           ├─ users = getUsers()
-  │           ├─ idx = users.findIndex(u => u.username === currentUsername)
-  │           ├─ users[idx].favorites = [...favMap].map(([id,name]) => ({id,name}))
-  │           └─ localStorage["musicApp_users"] = JSON.stringify(users)
+  ├─ router.push({ name:'player', query:{ track:"song.flac-...", _seq:"3" }})
   │
-  └─ 模板中 isFavorited(track) 检查 favMap.has(track.id)
-        ♡ (空心) → ♥ (实心红色)  或反之
+  ├─ keep-alive 恢复
+  │     └─ onActivated → nextTick → playTrackFromQuery()
+  │           handledSeq: null ≠ "3" → 通过
+  │           handledSeq = "3"
+  │           findIndex("song.flac-...") → 找到 position 2
+  │           selectTrack(2) → loadCurrentTrack(true) → audio.play()
+  │
+  └─ watch(_seq) 也触发
+        └─ playTrackFromQuery()
+              handledSeq: "3" === "3" → return（去重跳过）
 ```
 
 ---
 
-### 5. FavoritesView.vue → MusicPlayer 跨页面播放
+## 数据流总览
 
 ```
-收藏页面点击歌曲 "林俊杰 - 交换余生"
-  │
-  ├─ playTrack(f)                                  // f = { id:"xxx", name:"..." }
-  │     └─ router.push({
-  │           name: 'player',
-  │           query: { track: "xxx" }              // 通过 URL 传递歌曲 ID
-  │        })
-  │
-  └─ 路由跳转到 /player?track=xxx
-        │
-        └─ MusicPlayer 中的 watch 触发：
-              watch(() => route.query.track, (id) => {
-                const idx = tracks.value.findIndex(t => t.id === id)
-                if (idx !== -1) selectTrack(idx)    // 找到并播放
-              })
-```
+┌─────────────────────────────────────────────────────────────┐
+│                        localStorage                          │
+│  musicApp_users   musicApp_session   musicPlayerVolume       │
+└──────┬──────────────────┬───────────────────┬────────────────┘
+       │                  │                   │
+       ▼                  ▼                   ▼
+  useAuth            router.beforeEach    MusicPlayer.volume
+  useFavorites       App.sessionKey       <audio>.volume
+  FavoritesView      MusicPlayer.user     滑块绑定
+       │                  │
+       ▼                  ▼
+  favMap (Map)       <component :key>
+  toggleFavorite     keep-alive 缓存
+  isFavorited
+  cleanOrphanedFavorites
 
-**局限性**：如果当前播放器中未加载对应音频文件（用户选择了其他本地文件），则不会有任何操作。歌曲 ID 是在 `chooseFiles()` 时生成的，只存在于当前 `tracks` 数组中。
-
----
-
-### 完整的登录→播放→收藏 数据流（总览）
-
-```
-1. 注册
-   LoginView.submit()
-     → register("user", "pass")
-       → users.push({ id, username, password, favorites:[] })
-       → localStorage["musicApp_users"] = JSON.stringify(users)
-       → return true
-
-2. 登录
-   LoginView.submit()
-     → login("user", "pass")
-       → users.find(...) 校验密码
-       → localStorage["musicApp_session"] = '{"username":"user"}'
-       → return true
-     → router.push({ name:'player' })
-
-3. 路由守卫
-   beforeEach(to, from, next)
-     → getSession() 读取 localStorage["musicApp_session"]
-     → { username:"user" } 存在 → next() 放行
-
-4. App.vue
-   sessionKey computed 返回 "user"
-   → <component :key="user" /> 渲染 PlayerView
-   → keep-alive 缓存此实例
-
-5. 播放器初始化
-   MusicPlayer.setup()
-     → getSession() → username = "user"
-     → useFavorites(tracks) → favMap = 用户的收藏 Map
-     → 模板渲染 username + 收藏按钮状态
-
-6. 选择本地音频文件
-   chooseFiles(event)
-     → tracks.value = [{ id:"song.mp3-...-0", name:"song", url:blob:... }, ...]
-     → useFavorites 内的 favoriteTracks computed 自动更新（响应式）
-
-7. 点收藏
-   toggleFavorite(track)
-     → favMap.set/delete
-     → saveFavMap() → users[idx].favorites = [...]
-     → localStorage["musicApp_users"] 更新
-
-8. 去收藏页
-   goFavorites() → router.push({ name:'favorites' })
-     → FavoritesView.onMounted()
-       → getFavoriteTracks() 读取 localStorage 返回 [{id,name}, ...]
-
-9. 收藏页点歌曲
-   playTrack(f) → router.push({ name:'player', query:{ track:f.id } })
-     → MusicPlayer watch(route.query.track) 触发
-       → 在 tracks 中查找 → selectTrack() 播放
-
-10. 退出
-    logout() → clearSession()
-      → localStorage.removeItem("musicApp_session")
-      → router.push({ name:'login' })
+┌─────────────────────────────────────────────────────────────┐
+│                       IndexedDB                               │
+│  musicPlayerDB / audioFiles                                   │
+│  { id, name, data: ArrayBuffer, mime }                       │
+└──────┬──────────────────────────────────────────────────────┘
+       │
+       ▼
+  saveTracksToDB()   ← chooseFiles()
+  loadTracksFromDB()  → onMounted() 恢复 tracks
 ```
 
 ---
 
-## 响应式图
+## 响应式依赖图
 
 ```
-localStorage
+localStorage["musicApp_users"]
+  ├─→ useAuth.login()           → LoginView.error | success
+  ├─→ useAuth.register()
+  ├─→ useFavorites(tracks)      → MusicPlayer.isFavorited | toggleFavorite
+  └─→ getFavoriteTracks()       → FavoritesView.favorites
+
+localStorage["musicApp_session"]
+  ├─→ router.beforeEach()       → 放行/重定向
+  ├─→ App.sessionKey            → <component :key>
+  ├─→ MusicPlayer.username      → 顶栏显示
+  └─→ useFavorites 内部          → 确定读写哪个用户的收藏
+
+localStorage["musicPlayerVolume"]
+  └─→ MusicPlayer.volume ref    → <audio>.volume + 双向绑定滑块
+
+IndexedDB["musicPlayerDB"]
+  ├─→ saveTracksToDB()          ← chooseFiles() 保存
+  └─→ loadTracksFromDB()        → onMounted() 恢复 → tracks ref → 播放
+
+route.query._seq
+  └─→ watch(_seq)               → playTrackFromQuery() → selectTrack()
+route.query.track
+  └─→ playTrackFromQuery()      → findIndex → selectTrack()
+```
+
+---
+
+## 路由与组件生命周期
+
+```
+/ (LoginView)                  ← 未登录自动到此
+  │ login() 成功 → push('/player')
+  ▼
+/player (PlayerView)           ← keep-alive 缓存
+  │ MusicPlayer setup()
+  │ onMounted → loadTracksFromDB → playTrackFromQuery
   │
-  ├── musicApp_users ──────┬──→ useAuth.login()          ─→ LoginView.(error|success)
-  │                        ├──→ useAuth.register()
-  │                        ├──→ useFavorites(tracks)     ─→ MusicPlayer.(isFavorited|toggleFavorite)
-  │                        └──→ getFavoriteTracks()      ─→ FavoritesView.favorites
+  ├─[点收藏] → push('/favorites')
+  │   ▼
+  │ /favorites (FavoritesView)  ← 每次挂载都重新加载
+  │   │ onMounted → getFavoriteTracks()
+  │   │
+  │   ├─[点歌曲] → push('/player?track=xxx&_seq=N')
+  │   │   ▼
+  │   │ /player                  ← keep-alive 恢复
+  │   │   onActivated → playTrackFromQuery → 播放
+  │   │
+  │   └─[返回] → push('/player')
+  │       ▼
+  │       onActivated → playTrackFromQuery（无 query，跳过）
   │
-  ├── musicApp_session ────┬──→ router.beforeEach()       ─→ 放行/重定向
-  │                        ├──→ App.sessionKey computed   ─→ <component :key />
-  │                        ├──→ MusicPlayer.username      ─→ 顶栏显示
-  │                        └──→ useFavorites 内部          ─→ 确定读写哪个用户的收藏
-  │
-  └── musicPlayerVolume ────→ MusicPlayer.volume ref       ─→ <audio>.volume + 双向绑定滑块
+  └─[退出] → clearSession() → push('/')
 ```
 
 ---
@@ -371,6 +432,6 @@ localStorage
 
 ```bash
 npm run dev       # 开发服务器 (localhost:5173)
-npm run build     # 生产构建 (输出到 dist/)
+npm run build     # 生产构建 (dist/)
 npm run preview   # 预览生产构建
 ```
