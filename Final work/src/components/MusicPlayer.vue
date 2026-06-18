@@ -3,7 +3,7 @@
     <template #heading>
       <div class="top-bar">
         <h1>音乐播放器</h1>
-        <div class="top-bar-right">
+        <div class="top-bar-right"> 
           <span class="top-bar-user">{{ username }}</span>
           <button class="btn-top" @click="goFavorites">收藏</button>
           <button class="btn-top" @click="logout">退出</button>
@@ -102,8 +102,8 @@ const isSeeking    = ref(false)
 const errorMessage = ref('')
 const audioRef     = ref(null)
 
-// Track which _seq we've already handled to avoid double-processing
-// null = nothing handled yet; '' = handled a track without _seq (deep link)
+// 记录已经处理过的 _seq，避免重复执行同一次点击
+// null 表示尚未处理任何请求；'' 表示处理过没有 _seq 的播放请求（深度链接）
 let handledSeq = null
 
 const storageOk = typeof localStorage !== 'undefined'
@@ -119,7 +119,7 @@ const { toggleFavorite, isFavorited, cleanOrphanedFavorites } = useFavorites(tra
 const goFavorites = () => router.push({ name: 'favorites' })
 const logout = () => { clearSession(); router.push({ name: 'login' }) }
 
-/* ─── helpers ─── */
+/* ─── 辅助函数 ─── */
 
 const formatTime = (seconds) => {
   if (!Number.isFinite(seconds)) return '0:00'
@@ -145,17 +145,17 @@ const loadCurrentTrack = (shouldPlay) => {
   }
 }
 
-/** Try to play the track specified by ?track= query parameter. */
+/** 尝试播放由 ?track= 查询参数指定的曲目。 */
 const playTrackFromQuery = () => {
   const trackId = route.query.track
   if (!trackId) return
 
   const seq = route.query._seq || ''
-  // Already handled this exact click
+  // 已经处理过这次点击请求
   if (seq === handledSeq) return
   handledSeq = seq
 
-  // No tracks loaded — can't play anything
+  // 尚未加载曲目，无法播放
   if (!tracks.value.length) {
     if (tracksLoaded.value) {
       errorMessage.value = '请先添加音频文件，再播放收藏的歌曲'
@@ -173,7 +173,7 @@ const playTrackFromQuery = () => {
   selectTrack(idx)
 }
 
-/* ─── file selection ─── */
+/* ─── 文件选择 ─── */
 
 const chooseFiles = async (event) => {
   const files = Array.from(event.target.files)
@@ -185,7 +185,7 @@ const chooseFiles = async (event) => {
     url: URL.createObjectURL(file)
   }))
 
-  // Persist to IndexedDB so files survive page refresh
+  // 将文件持久化到 IndexedDB，以便刷新页面后仍能保留
   const toSave = files.map((file, i) => ({
     id: `${file.name}-${file.lastModified}-${i}`,
     name: file.name.replace(/\.[^.]*$/, ''),
@@ -197,7 +197,7 @@ const chooseFiles = async (event) => {
     console.warn('保存音频文件到本地数据库失败:', err)
   }
 
-  // Revoke old blob URLs before replacing
+  // 在替换前撤销旧的 Blob URL
   tracks.value.forEach(t => URL.revokeObjectURL(t.url))
   tracks.value = newTracks
   currentIndex.value = 0
@@ -205,12 +205,12 @@ const chooseFiles = async (event) => {
   isPlaying.value = false
   errorMessage.value = ''
   tracksLoaded.value = true
-  // Remove favorites that reference tracks no longer in the playlist
+  // 删除当前播放列表中已不存在的收藏曲目
   cleanOrphanedFavorites()
-  // If user came from favorites, play the requested track; otherwise load first
+  // 如果来自收藏页，则播放请求曲目；否则加载第一首
   nextTick(() => {
     if (route.query.track) {
-      // Reset handledSeq so the pending query is processed fresh
+      // 重置 handledSeq，以便重新处理挂起的请求
       handledSeq = null
       playTrackFromQuery()
     } else {
@@ -219,7 +219,7 @@ const chooseFiles = async (event) => {
   })
 }
 
-/* ─── playback controls ─── */
+/* ─── 播放控制 ─── */
 
 const togglePlay = () => {
   const audio = audioRef.value
@@ -253,7 +253,7 @@ const onSeekEnd = (event) => {
 const updateDuration = () => { const a = audioRef.value; duration.value = a ? Math.floor(a.duration) : 0 }
 const syncTime = () => { if (isSeeking.value) return; const a = audioRef.value; currentTime.value = a ? Math.floor(a.currentTime) : 0 }
 
-/* ─── volume persistence ─── */
+/* ─── 音量持久化 ─── */
 
 watch(volume, (val) => {
   const audio = audioRef.value
@@ -261,13 +261,13 @@ watch(volume, (val) => {
   if (storageOk) localStorage.setItem('musicPlayerVolume', val)
 })
 
-/* ─── lifecycle ─── */
+/* ─── 生命周期 ─── */
 
 onMounted(async () => {
   const audio = audioRef.value
   if (audio) audio.volume = volume.value
 
-  // Restore tracks from IndexedDB (survive page refresh)
+  // 从 IndexedDB 恢复曲目（刷新页面后仍保留）
   try {
     const savedTracks = await loadTracksFromDB()
     if (savedTracks.length > 0) {
@@ -276,7 +276,7 @@ onMounted(async () => {
         name: t.name,
         url: URL.createObjectURL(new Blob([t.data], { type: t.mime || 'audio/mpeg' }))
       }))
-      // If navigated from favorites (or page refresh on /player?track=...), play
+      // 如果是从收藏页返回（或刷新时带有 /player?track=...），则播放请求的曲目
       nextTick(() => playTrackFromQuery())
     }
   } catch (err) {
@@ -286,12 +286,12 @@ onMounted(async () => {
   }
 })
 
-// When returning from favorites page (keep-alive reactivation)
+// 返回收藏页时（keep-alive 重新激活）
 onActivated(() => {
   nextTick(() => playTrackFromQuery())
 })
 
-// Watch for _seq changes (from FavoritesView clicks)
+// 监听 _seq 变化（来自 FavoritesView 点击）
 watch(() => route.query._seq, () => {
   nextTick(() => playTrackFromQuery())
 })

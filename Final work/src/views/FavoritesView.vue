@@ -1,5 +1,5 @@
 <script>
-// Module scope — persists across FavoritesView remounts (component is NOT cached by keep-alive)
+// 模块作用域 —— 在 FavoritesView 重新挂载时仍然保留（组件未被 keep-alive 缓存）
 let clickSeq = 0
 </script>
 

@@ -26,14 +26,14 @@ export async function saveTracksToDB(tracksWithFiles) {
   const tx = db.transaction(STORE_NAME, 'readwrite')
   const store = tx.objectStore(STORE_NAME)
 
-  // Clear old tracks before saving new ones
+  // 在保存新曲目之前清除旧曲目
   await new Promise((resolve) => {
     const clearReq = store.clear()
     clearReq.onsuccess = resolve
-    clearReq.onerror = resolve // Continue even if clear fails
+    clearReq.onerror = resolve // 即使清除失败也继续执行
   })
 
-  // Read each file as ArrayBuffer and store
+  // 将每个文件读取为 ArrayBuffer 并存储
   for (const t of tracksWithFiles) {
     const buffer = await t.file.arrayBuffer()
     store.put({
@@ -51,7 +51,7 @@ export async function saveTracksToDB(tracksWithFiles) {
 }
 
 /**
- * Load all saved audio tracks from IndexedDB.
+ * 从 IndexedDB 加载所有已保存的音频曲目。
  * @returns {Promise<Array<{id: string, name: string, data: ArrayBuffer, mime: string}>>}
  */
 export async function loadTracksFromDB() {
@@ -67,7 +67,7 @@ export async function loadTracksFromDB() {
 }
 
 /**
- * Clear all tracks from IndexedDB.
+ * 清除 IndexedDB 中的所有曲目。
  */
 export async function clearTracksFromDB() {
   const db = await openDB()

@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { getSession } from './useAuth'
 
-/** Remove file extension from a filename string */
+/** 从文件名中移除扩展名 */
 const stripExt = (name) => (name || '').replace(/\.[^.]*$/, '')
 
 function getUsers() {
@@ -66,7 +66,7 @@ export function useFavorites(tracks) {
   })
 
   /**
-   * Remove favorites that reference tracks no longer in the current playlist.
+   * 删除当前播放列表中已不存在的收藏曲目。
    */
   const cleanOrphanedFavorites = () => {
     if (!username) return
